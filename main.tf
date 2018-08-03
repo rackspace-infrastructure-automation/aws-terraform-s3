@@ -90,7 +90,7 @@ locals {
     disabled = "${list()}"
   }
 
-  nc_ia_transitions      = "${var.noncurrent_version_transition_ia_days > 0 ? "ia_enbled": "disabled"}"
+  nc_ia_transitions      = "${var.noncurrent_version_transition_ia_days > 0 ? "ia_enabled": "disabled"}"
   nc_glacier_transitions = "${var.noncurrent_version_transition_glacier_days > 0 ? "glacier_enabled":"disabled"}"
 
   nc_transitions = "${concat(local.noncurrent_version_transition[local.nc_ia_transitions], local.noncurrent_version_transition[local.nc_glacier_transitions])}"
