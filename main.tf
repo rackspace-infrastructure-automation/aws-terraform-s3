@@ -130,7 +130,7 @@ locals {
     disabled = "${list()}"
   }
 
-  cors_rules_config = "${var.allowed_origins ? "enabled":"disabled"}"
+  cors_rules_config = "${length(var.allowed_origins) > 0 ? "enabled":"disabled"}"
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
