@@ -118,19 +118,19 @@ locals {
   # CORS rules
   cors_rules = {
     enabled = [
-    {
-      allowed_origins = ["${var.allowed_origins}"]
-      allowed_methods = ["${var.allowed_methods}"]
-      expose_headers  = ["${var.expose_headers}"]
-      allowed_headers = ["${var.allowed_headers}"]
-      max_age_seconds = ["${var.max_age_seconds}"]
-    }]
+      {
+        allowed_origins = ["${var.allowed_origins}"]
+        allowed_methods = ["${var.allowed_methods}"]
+        expose_headers  = ["${var.expose_headers}"]
+        allowed_headers = ["${var.allowed_headers}"]
+        max_age_seconds = ["${var.max_age_seconds}"]
+      },
+    ]
 
     disabled = "${list()}"
   }
 
   cors_rules_config = "${var.allowed_origins ? "enabled":"disabled"}"
-
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
