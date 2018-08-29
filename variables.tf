@@ -122,3 +122,33 @@ variable "website_index" {
   type        = "string"
   default     = "index.html"
 }
+
+variable "allowed_origins" {
+  description = "(Required) Specifies which origins are allowed."
+  type        = "list"
+  default     = []
+}
+
+variable "allowed_methods" {
+  description = "(Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD."
+  type        = "list"
+  default     = []
+}
+
+variable "expose_headers" {
+  description = " Specifies expose header in the response."
+  type        = "list"
+  default     = []
+}
+
+variable "allowed_headers" {
+  description = "Specifies which headers are allowed."
+  type        = "list"
+  default     = []
+}
+
+variable "max_age_seconds" {
+  description = "Specifies time in seconds that browser can cache the response for a preflight request."
+  type        = "string"
+  default     = "600"
+}

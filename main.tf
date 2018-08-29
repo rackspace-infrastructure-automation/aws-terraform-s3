@@ -114,6 +114,23 @@ locals {
   }
 
   lifecycle_rules_config = "${var.lifecycle_enabled ? "enabled":"disabled"}"
+
+  # CORS rules
+  cors_rules = {
+    enabled = [
+      {
+        allowed_origins = ["${var.allowed_origins}"]
+        allowed_methods = ["${var.allowed_methods}"]
+        expose_headers  = ["${var.expose_headers}"]
+        allowed_headers = ["${var.allowed_headers}"]
+        max_age_seconds = "${var.max_age_seconds}"
+      },
+    ]
+
+    disabled = "${list()}"
+  }
+
+  cors_rules_config = "${length(var.allowed_origins) > 0 ? "enabled":"disabled"}"
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
@@ -140,4 +157,6 @@ resource "aws_s3_bucket" "s3_bucket" {
   }
 
   lifecycle_rule = "${local.lifecycle_rules[local.lifecycle_rules_config]}"
+
+  cors_rule = "${local.cors_rules[local.cors_rules_config]}"
 }
