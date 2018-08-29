@@ -123,7 +123,7 @@ locals {
         allowed_methods = ["${var.allowed_methods}"]
         expose_headers  = ["${var.expose_headers}"]
         allowed_headers = ["${var.allowed_headers}"]
-        max_age_seconds = ["${var.max_age_seconds}"]
+        max_age_seconds = "${var.max_age_seconds}"
       },
     ]
 
