@@ -56,8 +56,8 @@ module "s3" {
   allowed_methods = ["PUT", "POST"]
 
   allowed_headers = ["*"]
-  
-#  Not defining these to ensure it can properly handle undefined variable lists or strings
-#  expose_headers  = ["Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length"]
-#  max_age_seconds = 3000
+
+  #  Not defining these to ensure it can properly handle undefined variable lists or strings
+  #  expose_headers  = ["Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length"]
+  #  max_age_seconds = 3000
 }
