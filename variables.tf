@@ -150,5 +150,5 @@ variable "allowed_headers" {
 variable "max_age_seconds" {
   description = "Specifies time in seconds that browser can cache the response for a preflight request."
   type        = "string"
-  default     = ""
+  default     = "600"
 }
