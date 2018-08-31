@@ -131,6 +131,44 @@ locals {
   }
 
   cors_rules_config = "${length(var.allowed_origins) > 0 ? "enabled":"disabled"}"
+
+  # SSE Configuration
+  server_side_encryption_rule_config = {
+    enabled = [
+      {
+        kms_master_key_id = "${var.kms_master_key_id}"
+        sse_algorithm     = "${var.sse_algorithm}"
+      },
+    ]
+
+    disabled = "${list()}"
+  }
+
+  server_side_encryption_rule_config = "${var.sse_algorithm == 'none' || var.sse_algorithm == 'None' ? "disabled" : "enabled"}"
+
+  server_side_encryption_apply_sse = {
+    enabled = [
+      {
+        apply_server_side_encryption_by_default = "${local.server_side_encryption_rule_config}"
+      },
+    ]
+
+    disabled = "${list()}"
+  }
+
+  server_side_encryption_rule_config = "${var.sse_algorithm == "none" ? "disabled" : "enabled"}"
+
+  server_side_encryption_rule = {
+    enabled = [
+      {
+        rules = "${local.server_side_encryption_apply_sse}"
+      },
+    ]
+
+    disabled = "${list()}"
+  }
+
+  server_side_encryption_rule_config = "${var.sse_algorithm == 'none' || var.sse_algorithm == 'None' ? "disabled" : "enabled"}"
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
@@ -139,14 +177,7 @@ resource "aws_s3_bucket" "s3_bucket" {
 
   tags = "${local.merged_tags}"
 
-  server_side_encryption_configuration {
-    "rule" {
-      "apply_server_side_encryption_by_default" {
-        kms_master_key_id = "${var.kms_master_key_id}"
-        sse_algorithm     = "${var.sse_algorithm}"
-      }
-    }
-  }
+  server_side_encryption_configuration = "${local.server_side_encryption_rule}"
 
   website = "${local.bucket_website_config[local.website_config]}"
 

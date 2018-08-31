@@ -22,7 +22,7 @@
 | noncurrent_version_transition_glacier_days | Indicates after how many days we are moving previous versions to Glacier.  Should be 0 to disable or at least 30 days longer than noncurrent_version_transition_ia_days. i.e. 0 to disable, 1-999 otherwise | string | `0` | no |
 | noncurrent_version_transition_ia_days | Indicates after how many days we are moving previous version objects to Standard-IA storage. Set to 0 to disable. | string | `0` | no |
 | object_expiration_days | Indicates after how many days we are deleting current version of objects. Set to 0 to disable or at least 365 days longer than TransitionInDaysGlacier. i.e. 0 to disable, otherwise 1-999 | string | `0` | no |
-| sse_algorithm | The server-side encryption algorithm to use. Valid values are AES256 and aws:kms | string | `AES256` | no |
+| sse_algorithm | The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none | string | `AES256` | no |
 | transition_to_glacier_days | Indicates after how many days we are moving current versions to Glacier.  Should be 0 to disable or at least 30 days longer than transition_to_ia_days. i.e. 0 to disable, otherwise 1-999 | string | `0` | no |
 | transition_to_ia_days | Indicates after how many days we are moving current objects to Standard-IA storage. i.e. 0 to disable, otherwise 1-999 | string | `0` | no |
 | versioning | Enable bucket versioning. i.e. true | false | string | `false` | no |
