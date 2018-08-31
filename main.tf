@@ -144,7 +144,7 @@ locals {
     disabled = "${list()}"
   }
 
-  server_side_encryption_rule_config = "${var.sse_algorithm == 'none' || var.sse_algorithm == 'None' ? "disabled" : "enabled"}"
+  server_side_encryption_rule_config = "${var.sse_algorithm == "none" ? "disabled" : "enabled"}"
 
   server_side_encryption_apply_sse = {
     enabled = [
@@ -168,7 +168,7 @@ locals {
     disabled = "${list()}"
   }
 
-  server_side_encryption_rule_config = "${var.sse_algorithm == 'none' || var.sse_algorithm == 'None' ? "disabled" : "enabled"}"
+  server_side_encryption_rule_config = "${var.sse_algorithm == "none" ? "disabled" : "enabled"}"
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
