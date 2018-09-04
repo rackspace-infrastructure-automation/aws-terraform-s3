@@ -82,7 +82,7 @@ variable "object_expiration_days" {
 }
 
 variable "sse_algorithm" {
-  description = "The server-side encryption algorithm to use. Valid values are AES256 and aws:kms"
+  description = "The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none"
   type        = "string"
   default     = "AES256"
 }
