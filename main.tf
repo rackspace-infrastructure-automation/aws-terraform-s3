@@ -20,6 +20,7 @@ locals {
   }
 
   merged_tags = "${merge(local.default_tags, var.bucket_tags)}"
+
   # If object expiration is greater than 0 then add object expiration, otherwise do not add.
   object_expiration = {
     enabled = [{
@@ -28,7 +29,9 @@ locals {
 
     disabled = "${list()}"
   }
+
   object_expiration_config = "${var.object_expiration_days > 0 ? "enabled" : "disabled"}"
+
   # Enable bucket logging?
   bucket_logging = {
     enabled = [{
@@ -38,7 +41,9 @@ locals {
 
     disabled = "${list()}"
   }
+
   bucket_logging_config = "${var.bucket_logging ? "enabled" : "disabled"}"
+
   # Enable Noncurrent Object Version Expiration?
   noncurrent_version_expiration = {
     enabled = [{
@@ -47,7 +52,9 @@ locals {
 
     disabled = "${list()}"
   }
+
   noncurrent_version_expiration_config = "${var.noncurrent_version_expiration_days > 0 ? "enabled":"disabled"}"
+
   # Enable File Transitions?
   transition = {
     ia_enabled = [{
@@ -62,9 +69,11 @@ locals {
 
     disabled = "${list()}"
   }
+
   ia_transitions      = "${var.transition_to_ia_days > 0 ? "ia_enabled": "disabled"}"
   glacier_transitions = "${var.transition_to_glacier_days > 0 ? "glacier_enabled": "disabled"}"
   transitions         = "${concat(local.transition[local.ia_transitions], local.transition[local.glacier_transitions])}"
+
   noncurrent_version_transition = {
     ia_enabled = [{
       days          = "${var.noncurrent_version_transition_ia_days}"
@@ -78,9 +87,11 @@ locals {
 
     disabled = "${list()}"
   }
+
   nc_ia_transitions      = "${var.noncurrent_version_transition_ia_days > 0 ? "ia_enabled": "disabled"}"
   nc_glacier_transitions = "${var.noncurrent_version_transition_glacier_days > 0 ? "glacier_enabled":"disabled"}"
   nc_transitions         = "${concat(local.noncurrent_version_transition[local.nc_ia_transitions], local.noncurrent_version_transition[local.nc_glacier_transitions])}"
+
   # Lifecycle Rules
   lifecycle_rules = {
     enabled = [
@@ -98,7 +109,9 @@ locals {
 
     disabled = "${list()}"
   }
+
   lifecycle_rules_config = "${var.lifecycle_enabled ? "enabled":"disabled"}"
+
   # CORS rules
   cors_rules = {
     enabled = [
@@ -113,7 +126,9 @@ locals {
 
     disabled = "${list()}"
   }
+
   cors_rules_config = "${length(var.allowed_origins) > 0 ? "enabled":"disabled"}"
+
   # SSE Rule Configuration
   server_side_encryption_rule = {
     enabled = [
@@ -131,6 +146,7 @@ locals {
 
     disabled = "${list()}"
   }
+
   server_side_encryption_rule_config = "${var.sse_algorithm == "none" ? "disabled" : "enabled"}"
 }
 
