@@ -16,7 +16,7 @@ locals {
   # Standard tags to use and then merge with custom tags.
   default_tags = {
     ServiceProvider = "Rackspace"
-    Environment     = "${var.environment ? var.environment:""}"
+    Environment     = "${var.environment}"
   }
 
   merged_tags = "${merge(local.default_tags, var.bucket_tags)}"
