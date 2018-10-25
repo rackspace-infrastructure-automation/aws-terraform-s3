@@ -1,6 +1,5 @@
 locals {
   acl_list = ["authenticated-read", "aws-exec-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write", "private", "public-read", "public-read-write"]
-  env_list = ["Development", "Integration", "PreProduction", "Production", "QA", "Staging", "Test"]
 
   # In order to not have to duplicate resources w/ and w/o web config, this checks and then adds website config as needed.
   bucket_website_config = {
@@ -17,7 +16,7 @@ locals {
   # Standard tags to use and then merge with custom tags.
   default_tags = {
     ServiceProvider = "Rackspace"
-    Environment     = "${contains(local.env_list, var.environment) ? var.environment:"Development"}"
+    Environment     = "${var.environment}"
   }
 
   merged_tags = "${merge(local.default_tags, var.bucket_tags)}"
@@ -73,8 +72,7 @@ locals {
 
   ia_transitions      = "${var.transition_to_ia_days > 0 ? "ia_enabled": "disabled"}"
   glacier_transitions = "${var.transition_to_glacier_days > 0 ? "glacier_enabled": "disabled"}"
-
-  transitions = "${concat(local.transition[local.ia_transitions], local.transition[local.glacier_transitions])}"
+  transitions         = "${concat(local.transition[local.ia_transitions], local.transition[local.glacier_transitions])}"
 
   noncurrent_version_transition = {
     ia_enabled = [{
@@ -92,8 +90,7 @@ locals {
 
   nc_ia_transitions      = "${var.noncurrent_version_transition_ia_days > 0 ? "ia_enabled": "disabled"}"
   nc_glacier_transitions = "${var.noncurrent_version_transition_glacier_days > 0 ? "glacier_enabled":"disabled"}"
-
-  nc_transitions = "${concat(local.noncurrent_version_transition[local.nc_ia_transitions], local.noncurrent_version_transition[local.nc_glacier_transitions])}"
+  nc_transitions         = "${concat(local.noncurrent_version_transition[local.nc_ia_transitions], local.noncurrent_version_transition[local.nc_glacier_transitions])}"
 
   # Lifecycle Rules
   lifecycle_rules = {
