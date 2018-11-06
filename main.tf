@@ -169,4 +169,6 @@ resource "aws_s3_bucket" "s3_bucket" {
   lifecycle_rule = "${local.lifecycle_rules[local.lifecycle_rules_config]}"
 
   cors_rule = "${local.cors_rules[local.cors_rules_config]}"
+
+  force_destroy = "${var.force_destroy_bucket}"
 }
