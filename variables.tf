@@ -27,6 +27,12 @@ variable "environment" {
   default     = "Development"
 }
 
+variable "force_destroy_bucket" {
+  description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable."
+  type        = "string"
+  default     = false
+}
+
 variable "kms_master_key_id" {
   description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
   type        = "string"

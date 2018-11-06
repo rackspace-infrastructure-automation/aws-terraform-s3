@@ -12,6 +12,7 @@
 | bucket_tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | map | `<map>` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | string | `Development` | no |
 | expose_headers | Specifies expose header in the response. | list | `<list>` | no |
+| force_destroy_bucket | A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. | string | `false` | no |
 | kms_master_key_id | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms. | string | `` | no |
 | lifecycle_enabled | Enable object lifecycle management. i.e. true | false | string | `false` | no |
 | lifecycle_rule_prefix | Object keyname prefix identifying one or more objects to which the rule applies. Set as an empty string to target the whole bucket. | string | `` | no |
