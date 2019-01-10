@@ -1,3 +1,39 @@
+/**
+ * # aws-terraform-s3
+ *
+ *This module builds a s3 bucket with varying options.
+ *It will not do s3 origin, which is in another module.
+ *
+ *## Basic Usage
+ *
+ *```
+ *module "s3" {
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.0.4"
+ *  bucket_name = "${random_string.s3_rstring.result}-example-s3-bucket"
+ *  bucket_acl = "bucket-owner-full-control"
+ *  bucket_logging = false
+ *  bucket_tags = {
+ *    RightSaid = "Fred"
+ *    LeftSaid  = "George"
+ *  }
+ *  environment = "Development"
+ *  lifecycle_enabled = true
+ *  noncurrent_version_expiration_days = "425"
+ *  noncurrent_version_transition_glacier_days = "60"
+ *  noncurrent_version_transition_ia_days = "30"
+ *  object_expiration_days = "425"
+ *  transition_to_glacier_days = "60"
+ *  transition_to_ia_days = "30"
+ *  versioning = true
+ *  website = true
+ *  website_error = "error.html"
+ *  website_index = "index.html"
+ *}
+ *```
+ *
+ * Full working references are available at [examples](examples)
+ */
+
 locals {
   acl_list = ["authenticated-read", "aws-exec-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write", "private", "public-read", "public-read-write"]
 
