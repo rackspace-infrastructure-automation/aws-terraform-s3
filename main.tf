@@ -171,10 +171,10 @@ locals {
   cors_rules = {
     enabled = [
       {
-        allowed_origins = [var.allowed_origins]
-        allowed_methods = [var.allowed_methods]
-        expose_headers  = [var.expose_headers]
-        allowed_headers = [var.allowed_headers]
+        allowed_origins = var.allowed_origins
+        allowed_methods = var.allowed_methods
+        expose_headers  = var.expose_headers
+        allowed_headers = var.allowed_headers
         max_age_seconds = var.max_age_seconds
       },
     ]
@@ -212,7 +212,7 @@ resource "aws_s3_bucket" "s3_bucket" {
   tags = local.merged_tags
 
   dynamic "server_side_encryption_configuration" {
-    for_each = [local.server_side_encryption_rule[local.server_side_encryption_rule_config]]
+    for_each = local.server_side_encryption_rule[local.server_side_encryption_rule_config]
     content {
       # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
       # which keys might be set in maps assigned here, so it has
