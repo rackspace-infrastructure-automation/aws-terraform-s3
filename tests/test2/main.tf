@@ -2,8 +2,12 @@
 # This test adds the 'CORS Rules' configuration variables
 ###
 
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 1.2"
+  version = "~> 2.0"
   region  = "us-west-2"
 }
 
@@ -56,7 +60,6 @@ module "s3" {
   allowed_methods = ["PUT", "POST"]
 
   allowed_headers = ["*"]
-
   #  Not defining these to ensure it can properly handle undefined variable lists or strings
   #  expose_headers  = ["Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length"]
   #  max_age_seconds = 3000
