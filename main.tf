@@ -43,89 +43,73 @@ terraform {
 }
 
 locals {
+
+  ##############################################################
+  # Bucket local variables
+  ##############################################################
+
   acl_list = ["authenticated-read", "aws-exec-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write", "private", "public-read", "public-read-write"]
 
-  # In order to not have to duplicate resources w/ and w/o web config, this checks and then adds website config as needed.
-  bucket_website_config = {
-    enabled = [
-      {
-        index_document = var.website_index
-        error_document = var.website_error
-      },
-    ]
-    disabled = []
-  }
-
-  website_config = var.website ? "enabled" : "disabled"
-
-  # Standard tags to use and then merge with custom tags.
   default_tags = {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
   }
 
-  merged_tags = merge(local.default_tags, var.bucket_tags)
+  merged_tags = merge(var.bucket_tags, local.default_tags)
 
-  # If object expiration is greater than 0 then add object expiration, otherwise do not add.
+
+  ##############################################################
+  # CORS rules local variables
+  ##############################################################
+
+  cors_rules = {
+    enabled = [
+      {
+        allowed_headers = var.allowed_headers
+        allowed_methods = var.allowed_methods
+        allowed_origins = var.allowed_origins
+        expose_headers  = var.expose_headers
+        max_age_seconds = var.max_age_seconds
+      },
+    ]
+    disabled = []
+  }
+
+  ##############################################################
+  # Lifecycle Rules local variables
+  ##############################################################
+
+  lifecycle_rules = {
+    enabled = [
+      {
+        enabled                       = var.lifecycle_enabled
+        expiration                    = local.object_expiration[var.object_expiration_days > 0 ? "enabled" : "disabled"]
+        noncurrent_version_expiration = local.noncurrent_version_expiration[var.noncurrent_version_expiration_days > 0 ? "enabled" : "disabled"]
+        prefix                        = var.lifecycle_rule_prefix
+
+        noncurrent_version_transition = concat(
+          local.noncurrent_version_transition[var.noncurrent_version_transition_ia_days > 0 ? "ia_enabled" : "disabled"],
+          local.noncurrent_version_transition[var.noncurrent_version_transition_glacier_days > 0 ? "glacier_enabled" : "disabled"],
+        )
+
+        transition = concat(
+          local.transition[var.transition_to_ia_days > 0 ? "ia_enabled" : "disabled"],
+          local.transition[var.transition_to_glacier_days > 0 ? "glacier_enabled" : "disabled"],
+        )
+      },
+    ]
+    disabled = []
+  }
+
   object_expiration = {
-    enabled = [
-      {
-        days = var.object_expiration_days
-      },
-    ]
+    enabled  = [{ days = var.object_expiration_days }]
     disabled = []
   }
 
-  object_expiration_config = var.object_expiration_days > 0 ? "enabled" : "disabled"
-
-  # Enable bucket logging?
-  bucket_logging = {
-    enabled = [
-      {
-        target_bucket = var.logging_bucket_name
-        target_prefix = var.logging_bucket_prefix
-      },
-    ]
-    disabled = []
-  }
-
-  bucket_logging_config = var.bucket_logging ? "enabled" : "disabled"
-
-  # Enable Noncurrent Object Version Expiration?
   noncurrent_version_expiration = {
-    enabled = [
-      {
-        days = var.noncurrent_version_expiration_days
-      },
-    ]
+    enabled  = [{ days = var.noncurrent_version_expiration_days }]
     disabled = []
   }
-
-  noncurrent_version_expiration_config = var.noncurrent_version_expiration_days > 0 ? "enabled" : "disabled"
-
-  # Enable File Transitions?
-  transition = {
-    ia_enabled = [
-      {
-        days          = var.transition_to_ia_days
-        storage_class = "STANDARD_IA"
-      },
-    ]
-    glacier_enabled = [
-      {
-        days          = var.transition_to_glacier_days
-        storage_class = "GLACIER"
-      },
-    ]
-    disabled = []
-  }
-
-  ia_transitions      = var.transition_to_ia_days > 0 ? "ia_enabled" : "disabled"
-  glacier_transitions = var.transition_to_glacier_days > 0 ? "glacier_enabled" : "disabled"
-  transitions = concat(
-    local.transition[local.ia_transitions],
-    local.transition[local.glacier_transitions],
-  )
 
   noncurrent_version_transition = {
     ia_enabled = [
@@ -143,47 +127,40 @@ locals {
     disabled = []
   }
 
-  nc_ia_transitions      = var.noncurrent_version_transition_ia_days > 0 ? "ia_enabled" : "disabled"
-  nc_glacier_transitions = var.noncurrent_version_transition_glacier_days > 0 ? "glacier_enabled" : "disabled"
-  nc_transitions = concat(
-    local.noncurrent_version_transition[local.nc_ia_transitions],
-    local.noncurrent_version_transition[local.nc_glacier_transitions],
-  )
-
-  # Lifecycle Rules
-  lifecycle_rules = {
-    enabled = [
+  transition = {
+    ia_enabled = [
       {
-        enabled                       = var.lifecycle_enabled
-        prefix                        = var.lifecycle_rule_prefix
-        expiration                    = local.object_expiration[local.object_expiration_config]
-        noncurrent_version_expiration = local.noncurrent_version_expiration[local.noncurrent_version_expiration_config]
-        transition                    = local.transitions
-        noncurrent_version_transition = local.nc_transitions
+        days          = var.transition_to_ia_days
+        storage_class = "STANDARD_IA"
+      },
+    ]
+    glacier_enabled = [
+      {
+        days          = var.transition_to_glacier_days
+        storage_class = "GLACIER"
       },
     ]
     disabled = []
   }
 
-  lifecycle_rules_config = var.lifecycle_enabled ? "enabled" : "disabled"
+  ##############################################################
+  # Bucket Logging local variables
+  ##############################################################
 
-  # CORS rules
-  cors_rules = {
+  bucket_logging = {
     enabled = [
       {
-        allowed_origins = var.allowed_origins
-        allowed_methods = var.allowed_methods
-        expose_headers  = var.expose_headers
-        allowed_headers = var.allowed_headers
-        max_age_seconds = var.max_age_seconds
+        target_bucket = var.logging_bucket_name
+        target_prefix = var.logging_bucket_prefix
       },
     ]
     disabled = []
   }
 
-  cors_rules_config = length(var.allowed_origins) > 0 ? "enabled" : "disabled"
+  ##############################################################
+  # Server side encryption rule local variables
+  ##############################################################
 
-  # SSE Rule Configuration
   server_side_encryption_rule = {
     enabled = [
       {
@@ -202,78 +179,41 @@ locals {
     disabled = []
   }
 
-  server_side_encryption_rule_config = var.sse_algorithm == "none" ? "disabled" : "enabled"
+  ##############################################################
+  # Bucket website local variables
+  ##############################################################
+
+  bucket_website_config = {
+    enabled = [
+      {
+        index_document = var.website_index
+        error_document = var.website_error
+      },
+    ]
+    disabled = []
+  }
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = var.bucket_name
-  acl    = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+  acl           = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+  bucket        = var.bucket_name
+  force_destroy = var.force_destroy_bucket
+  tags          = local.merged_tags
 
-  tags = local.merged_tags
-
-  dynamic "server_side_encryption_configuration" {
-    for_each = local.server_side_encryption_rule[local.server_side_encryption_rule_config]
+  dynamic "cors_rule" {
+    for_each = local.cors_rules[length(var.allowed_origins) > 0 ? "enabled" : "disabled"]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
-      dynamic "rule" {
-        for_each = lookup(server_side_encryption_configuration.value, "rule", [])
-        content {
-          dynamic "apply_server_side_encryption_by_default" {
-            for_each = lookup(rule.value, "apply_server_side_encryption_by_default", [])
-            content {
-              kms_master_key_id = lookup(apply_server_side_encryption_by_default.value, "kms_master_key_id", null)
-              sse_algorithm     = apply_server_side_encryption_by_default.value.sse_algorithm
-            }
-          }
-        }
-      }
+      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
+      allowed_methods = cors_rule.value.allowed_methods
+      allowed_origins = cors_rule.value.allowed_origins
+      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
+      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
     }
-  }
-
-  dynamic "website" {
-    for_each = local.bucket_website_config[local.website_config]
-    content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
-      error_document           = lookup(website.value, "error_document", null)
-      index_document           = lookup(website.value, "index_document", null)
-      redirect_all_requests_to = lookup(website.value, "redirect_all_requests_to", null)
-      routing_rules            = lookup(website.value, "routing_rules", null)
-    }
-  }
-
-  dynamic "logging" {
-    for_each = local.bucket_logging[local.bucket_logging_config]
-    content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
-      target_bucket = logging.value.target_bucket
-      target_prefix = lookup(logging.value, "target_prefix", null)
-    }
-  }
-
-  versioning {
-    enabled = var.versioning
   }
 
   dynamic "lifecycle_rule" {
-    for_each = local.lifecycle_rules[local.lifecycle_rules_config]
+    for_each = local.lifecycle_rules[(var.lifecycle_enabled ? "enabled" : "disabled")]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
       enabled                                = lifecycle_rule.value.enabled
       id                                     = lookup(lifecycle_rule.value, "id", null)
@@ -292,14 +232,14 @@ resource "aws_s3_bucket" "s3_bucket" {
       dynamic "noncurrent_version_expiration" {
         for_each = lookup(lifecycle_rule.value, "noncurrent_version_expiration", [])
         content {
-          days = lookup(noncurrent_version_expiration.value, "days", null)
+          days = noncurrent_version_expiration.value.days
         }
       }
 
       dynamic "noncurrent_version_transition" {
         for_each = lookup(lifecycle_rule.value, "noncurrent_version_transition", [])
         content {
-          days          = lookup(noncurrent_version_transition.value, "days", null)
+          days          = noncurrent_version_transition.value.days
           storage_class = noncurrent_version_transition.value.storage_class
         }
       }
@@ -315,21 +255,43 @@ resource "aws_s3_bucket" "s3_bucket" {
     }
   }
 
-  dynamic "cors_rule" {
-    for_each = local.cors_rules[local.cors_rules_config]
+  dynamic "logging" {
+    for_each = local.bucket_logging[var.bucket_logging ? "enabled" : "disabled"]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
-      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
-      allowed_methods = cors_rule.value.allowed_methods
-      allowed_origins = cors_rule.value.allowed_origins
-      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
-      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
+      target_bucket = logging.value.target_bucket
+      target_prefix = lookup(logging.value, "target_prefix", null)
     }
   }
 
-  force_destroy = var.force_destroy_bucket
+  dynamic "server_side_encryption_configuration" {
+    for_each = local.server_side_encryption_rule[var.sse_algorithm == "none" ? "disabled" : "enabled"]
+    content {
+      dynamic "rule" {
+        for_each = lookup(server_side_encryption_configuration.value, "rule", [])
+        content {
+          dynamic "apply_server_side_encryption_by_default" {
+            for_each = lookup(rule.value, "apply_server_side_encryption_by_default", [])
+            content {
+              kms_master_key_id = lookup(apply_server_side_encryption_by_default.value, "kms_master_key_id", null)
+              sse_algorithm     = apply_server_side_encryption_by_default.value.sse_algorithm
+            }
+          }
+        }
+      }
+    }
+  }
+
+  versioning {
+    enabled = var.versioning
+  }
+
+  dynamic "website" {
+    for_each = local.bucket_website_config[var.website ? "enabled" : "disabled"]
+    content {
+      error_document           = lookup(website.value, "error_document", null)
+      index_document           = lookup(website.value, "index_document", null)
+      redirect_all_requests_to = lookup(website.value, "redirect_all_requests_to", null)
+      routing_rules            = lookup(website.value, "routing_rules", null)
+    }
+  }
 }
