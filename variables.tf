@@ -29,17 +29,6 @@ variable "bucket_logging" {
   default     = false
 }
 
-variable "bucket_name" {
-  description = "The name of the S3 bucket for the access logs. The bucket name can contain only lowercase letters, numbers, periods (.), and dashes (-). Must be globally unique. If changed, forces a new resource."
-  type        = string
-}
-
-variable "bucket_tags" {
-  description = "A map of tags to be applied to the Bucket. i.e {Environment='Development'}"
-  type        = map(string)
-  default     = {}
-}
-
 variable "environment" {
   description = "Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test']"
   type        = string
@@ -58,7 +47,7 @@ variable "force_destroy_bucket" {
   default     = false
 }
 
-variable "kms_master_key_id" {
+variable "kms_key_id" {
   description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
   type        = string
   default     = ""
@@ -94,6 +83,11 @@ variable "max_age_seconds" {
   default     = 600
 }
 
+variable "name" {
+  description = "The name of the S3 bucket for the access logs. The bucket name can contain only lowercase letters, numbers, periods (.), and dashes (-). Must be globally unique. If changed, forces a new resource."
+  type        = string
+}
+
 variable "noncurrent_version_expiration_days" {
   description = "Indicates after how many days we are deleting previous version of objects.  Set to 0 to disable or at least 365 days longer than noncurrent_version_transition_glacier_days. i.e. 0 to disable, 1-999 otherwise"
   type        = number
@@ -122,6 +116,12 @@ variable "sse_algorithm" {
   description = "The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none"
   type        = string
   default     = "AES256"
+}
+
+variable "tags" {
+  description = "A map of tags to be applied to the Bucket. i.e {Environment='Development'}"
+  type        = map(string)
+  default     = {}
 }
 
 variable "transition_to_glacier_days" {

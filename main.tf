@@ -9,29 +9,45 @@
  *```
  *module "s3" {
  *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.0.4"
- *  bucket_name = "${random_string.s3_rstring.result}-example-s3-bucket"
- *  bucket_acl = "bucket-owner-full-control"
- *  bucket_logging = false
- *  bucket_tags = {
+ *
+ *  bucket_acl                                 = "bucket-owner-full-control"
+ *  bucket_logging                             = false
+ *  environment                                = "Development"
+ *  lifecycle_enabled                          = true
+ *  name                                       = "${random_string.s3_rstring.result}-example-s3-bucket"
+ *  noncurrent_version_expiration_days         = "425"
+ *  noncurrent_version_transition_glacier_days = "60"
+ *  noncurrent_version_transition_ia_days      = "30"
+ *  object_expiration_days                     = "425"
+ *  transition_to_glacier_days                 = "60"
+ *  transition_to_ia_days                      = "30"
+ *  versioning                                 = true
+ *  website                                    = true
+ *  website_error                              = "error.html"
+ *  website_index                              = "index.html"
+ *
+ *  tags = {
  *    RightSaid = "Fred"
  *    LeftSaid  = "George"
  *  }
- *  environment = "Development"
- *  lifecycle_enabled = true
- *  noncurrent_version_expiration_days = "425"
- *  noncurrent_version_transition_glacier_days = "60"
- *  noncurrent_version_transition_ia_days = "30"
- *  object_expiration_days = "425"
- *  transition_to_glacier_days = "60"
- *  transition_to_ia_days = "30"
- *  versioning = true
- *  website = true
- *  website_error = "error.html"
- *  website_index = "index.html"
  *}
  *```
  *
  * Full working references are available at [examples](examples)
+ *
+ *## Terraform 0.12 upgrade
+ *
+ *Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
+ *made when upgrading from a previous release to version 0.12.0 or higher.
+ *
+ *### Module variables
+ *
+ *The following module variables were updated to better meet current Rackspace style guides:
+ *
+ *- `bucket_name` -> `name`
+ *- `kms_master_key_id` -> `kms_key_id`
+ *- `bucket_tags` -> `tags`
+ *
  */
 
 terraform {
@@ -54,9 +70,6 @@ locals {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
   }
-
-  merged_tags = merge(var.bucket_tags, local.default_tags)
-
 
   ##############################################################
   # CORS rules local variables
@@ -168,7 +181,7 @@ locals {
           {
             apply_server_side_encryption_by_default = [
               {
-                kms_master_key_id = var.kms_master_key_id
+                kms_master_key_id = var.kms_key_id
                 sse_algorithm     = var.sse_algorithm
               },
             ]
@@ -196,9 +209,9 @@ locals {
 
 resource "aws_s3_bucket" "s3_bucket" {
   acl           = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
-  bucket        = var.bucket_name
+  bucket        = var.name
   force_destroy = var.force_destroy_bucket
-  tags          = local.merged_tags
+  tags          = merge(var.tags, local.default_tags)
 
   dynamic "cors_rule" {
     for_each = local.cors_rules[length(var.allowed_origins) > 0 ? "enabled" : "disabled"]

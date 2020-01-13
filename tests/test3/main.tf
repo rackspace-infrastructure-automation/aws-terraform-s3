@@ -20,13 +20,13 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  bucket_name = "${random_string.s3_rstring.result}-example-s3-bucket"
+  name = "${random_string.s3_rstring.result}-example-s3-bucket"
 
   bucket_acl = "bucket-owner-full-control"
 
   bucket_logging = false
 
-  bucket_tags = {
+  tags = {
     RightSaid = "Fred"
     LeftSaid  = "George"
   }
