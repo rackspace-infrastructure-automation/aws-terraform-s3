@@ -6,9 +6,9 @@
  *
  *## Basic Usage
  *
- *```
+ *```HCL
  *module "s3" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.0.4"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.0"
  *
  *  bucket_acl                                 = "bucket-owner-full-control"
  *  bucket_logging                             = false
