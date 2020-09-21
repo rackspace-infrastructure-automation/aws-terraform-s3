@@ -23,15 +23,12 @@ output "bucket_region" {
   value       = aws_s3_bucket.s3_bucket.region
 }
 
-# endpoint and domain do not return correctly if `website = false` per https://github.com/terraform-providers/terraform-provider-aws/issues/4132
-# If you would like to use these outputs, uncomment but make sure `website = true`
+output "bucket_website_domain" {
+  description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records."
+  value       = var.website ? aws_s3_bucket.s3_bucket.website_domain : ""
+}
 
-# output "bucket_website_domain" {
-#   description = "The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records."
-#   value       = aws_s3_bucket.s3_bucket.website_domain
-# }
-
-# output "bucket_website_endpoint" {
-#   description = "The website endpoint, if the bucket is configured with a website. If not, this will be an empty string."
-#   value       = aws_s3_bucket.s3_bucket.website_endpoint
-# }
+output "bucket_website_endpoint" {
+  description = "The website endpoint, if the bucket is configured with a website. If not, this will be an empty string."
+  value       = var.website ? aws_s3_bucket.s3_bucket.website_endpoint : ""
+}

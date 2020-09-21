@@ -94,4 +94,6 @@ The following module variables were updated to better meet current Rackspace sty
 | bucket\_hosted\_zone\_id | The Route 53 Hosted Zone ID for this bucket's region. |
 | bucket\_id | The name of the bucket. |
 | bucket\_region | The AWS region this bucket resides in. |
+| bucket\_website\_domain | The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. |
+| bucket\_website\_endpoint | The website endpoint, if the bucket is configured with a website. If not, this will be an empty string. |
 
