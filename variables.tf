@@ -112,6 +112,12 @@ variable "object_expiration_days" {
   default     = 0
 }
 
+variable "rax_mpu_cleanup_enabled" {
+  description = "Enable Rackspace default values for cleanup of Multipart Uploads."
+  type        = bool
+  default     = true
+}
+
 variable "sse_algorithm" {
   description = "The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none"
   type        = string

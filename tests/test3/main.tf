@@ -1,5 +1,5 @@
 ###
-# This test adds the sse_algorithm option 'none'
+# This test adds the sse_algorithm option 'none' and disabled MPU cleanup
 ###
 
 terraform {
@@ -29,6 +29,7 @@ module "s3" {
   noncurrent_version_transition_glacier_days = "60"
   noncurrent_version_transition_ia_days      = "30"
   object_expiration_days                     = "425"
+  rax_mpu_cleanup_enabled                    = false
   sse_algorithm                              = "none"
   transition_to_glacier_days                 = "60"
   transition_to_ia_days                      = "30"
