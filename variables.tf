@@ -158,3 +158,9 @@ variable "max_age_seconds" {
   type        = "string"
   default     = "600"
 }
+
+variable "rax_mpu_cleanup_enabled" {
+  description = "Enable Rackspace default values for cleanup of Multipart Uploads."
+  type        = "string"
+  default     = true
+}
