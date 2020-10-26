@@ -1,5 +1,5 @@
 ###
-# This test adds the sse_algorithm option 'none'
+# This test adds the sse_algorithm option 'none' and disabled MPU cleanup
 ###
 
 provider "aws" {
@@ -38,6 +38,8 @@ module "s3" {
   noncurrent_version_transition_ia_days = "30"
 
   object_expiration_days = "425"
+
+  rax_mpu_cleanup_enabled = false
 
   transition_to_glacier_days = "60"
 

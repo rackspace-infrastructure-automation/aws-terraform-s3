@@ -1,35 +1,35 @@
 /**
  * # aws-terraform-s3
  *
- *This module builds a s3 bucket with varying options.
- *It will not do s3 origin, which is in another module.
+ * This module builds a s3 bucket with varying options.
+ * It will not do s3 origin, which is in another module.
  *
- *## Basic Usage
+ * ## Basic Usage
  *
- *```
- *module "s3" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.0.4"
- *  bucket_name = "${random_string.s3_rstring.result}-example-s3-bucket"
- *  bucket_acl = "bucket-owner-full-control"
- *  bucket_logging = false
- *  bucket_tags = {
- *    RightSaid = "Fred"
- *    LeftSaid  = "George"
- *  }
- *  environment = "Development"
- *  lifecycle_enabled = true
- *  noncurrent_version_expiration_days = "425"
- *  noncurrent_version_transition_glacier_days = "60"
- *  noncurrent_version_transition_ia_days = "30"
- *  object_expiration_days = "425"
- *  transition_to_glacier_days = "60"
- *  transition_to_ia_days = "30"
- *  versioning = true
- *  website = true
- *  website_error = "error.html"
- *  website_index = "index.html"
- *}
- *```
+ * ```
+ * module "s3" {
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.0.5"
+ *   bucket_name = "${random_string.s3_rstring.result}-example-s3-bucket"
+ *   bucket_acl = "bucket-owner-full-control"
+ *   bucket_logging = false
+ *   bucket_tags = {
+ *     RightSaid = "Fred"
+ *     LeftSaid  = "George"
+ *   }
+ *   environment = "Development"
+ *   lifecycle_enabled = true
+ *   noncurrent_version_expiration_days = "425"
+ *   noncurrent_version_transition_glacier_days = "60"
+ *   noncurrent_version_transition_ia_days = "30"
+ *   object_expiration_days = "425"
+ *   transition_to_glacier_days = "60"
+ *   transition_to_ia_days = "30"
+ *   versioning = true
+ *   website = true
+ *   website_error = "error.html"
+ *   website_index = "index.html"
+ * }
+ * ```
  *
  * Full working references are available at [examples](examples)
  */
@@ -55,7 +55,15 @@ locals {
     Environment     = "${var.environment}"
   }
 
-  merged_tags = "${merge(local.default_tags, var.bucket_tags)}"
+  mpu_cleanup_tags = {
+    mpu_cleanup_enabled = {}
+
+    disabled = {
+      SkipBucket = "True"
+    }
+  }
+
+  merged_tags = "${merge(local.default_tags, var.bucket_tags, local.mpu_cleanup_tags[local.mpu_cleanup_config])}"
 
   # If object expiration is greater than 0 then add object expiration, otherwise do not add.
   object_expiration = {
@@ -143,10 +151,20 @@ locals {
       },
     ]
 
+    mpu_cleanup_enabled = [
+      {
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        id                                     = "rax-cleanup-incomplete-mpu-objects"
+        expiration                             = [{}]
+      },
+    ]
+
     disabled = "${list()}"
   }
 
   lifecycle_rules_config = "${var.lifecycle_enabled ? "enabled":"disabled"}"
+  mpu_cleanup_config     = "${var.rax_mpu_cleanup_enabled ? "mpu_cleanup_enabled":"disabled"}"
 
   # CORS rules
   cors_rules = {
@@ -202,7 +220,7 @@ resource "aws_s3_bucket" "s3_bucket" {
     enabled = "${var.versioning}"
   }
 
-  lifecycle_rule = "${local.lifecycle_rules[local.lifecycle_rules_config]}"
+  lifecycle_rule = "${concat(local.lifecycle_rules[local.lifecycle_rules_config], local.lifecycle_rules[local.mpu_cleanup_config])}"
 
   cors_rule = "${local.cors_rules[local.cors_rules_config]}"
 
