@@ -8,7 +8,7 @@
  *
  * ```HCL
  * module "s3" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.0"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
  *
  *   bucket_acl                                 = "bucket-owner-full-control"
  *   bucket_logging                             = false
@@ -69,6 +69,7 @@ locals {
   default_tags = {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
+    SkipBucket      = var.rax_mpu_cleanup_enabled ? null : "True"
   }
 
   ##############################################################
@@ -109,6 +110,14 @@ locals {
           local.transition[var.transition_to_ia_days > 0 ? "ia_enabled" : "disabled"],
           local.transition[var.transition_to_glacier_days > 0 ? "glacier_enabled" : "disabled"],
         )
+      },
+    ]
+    mpu_cleanup_enabled = [
+      {
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        id                                     = "rax-cleanup-incomplete-mpu-objects"
+        expiration                             = [{}]
       },
     ]
     disabled = []
@@ -225,7 +234,11 @@ resource "aws_s3_bucket" "s3_bucket" {
   }
 
   dynamic "lifecycle_rule" {
-    for_each = local.lifecycle_rules[(var.lifecycle_enabled ? "enabled" : "disabled")]
+    for_each = concat(
+      local.lifecycle_rules[(var.lifecycle_enabled ? "enabled" : "disabled")],
+      local.lifecycle_rules[(var.rax_mpu_cleanup_enabled ? "mpu_cleanup_enabled" : "disabled")]
+    )
+
     content {
       abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
       enabled                                = lifecycle_rule.value.enabled

@@ -7,7 +7,7 @@ It will not do s3 origin, which is in another module.
 
 ```HCL
 module "s3" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
 
   bucket_acl                                 = "bucket-owner-full-control"
   bucket_logging                             = false
@@ -76,6 +76,7 @@ The following module variables were updated to better meet current Rackspace sty
 | noncurrent\_version\_transition\_glacier\_days | Indicates after how many days we are moving previous versions to Glacier.  Should be 0 to disable or at least 30 days longer than noncurrent\_version\_transition\_ia\_days. i.e. 0 to disable, 1-999 otherwise | `number` | `0` | no |
 | noncurrent\_version\_transition\_ia\_days | Indicates after how many days we are moving previous version objects to Standard-IA storage. Set to 0 to disable. | `number` | `0` | no |
 | object\_expiration\_days | Indicates after how many days we are deleting current version of objects. Set to 0 to disable or at least 365 days longer than TransitionInDaysGlacier. i.e. 0 to disable, otherwise 1-999 | `number` | `0` | no |
+| rax\_mpu\_cleanup\_enabled | Enable Rackspace default values for cleanup of Multipart Uploads. | `bool` | `true` | no |
 | sse\_algorithm | The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none | `string` | `"AES256"` | no |
 | tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | `map(string)` | `{}` | no |
 | transition\_to\_glacier\_days | Indicates after how many days we are moving current versions to Glacier.  Should be 0 to disable or at least 30 days longer than transition\_to\_ia\_days. i.e. 0 to disable, otherwise 1-999 | `number` | `0` | no |
