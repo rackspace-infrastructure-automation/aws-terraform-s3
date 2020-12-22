@@ -23,8 +23,9 @@ module "s3" {
   allowed_headers                            = ["*"]
   allowed_methods                            = ["PUT", "POST"]
   allowed_origins                            = ["*"]
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   bucket_logging                             = false
+  cost_center                                = var.cost_center
   environment                                = "Development"
   lifecycle_enabled                          = true
   name                                       = "${random_string.s3_rstring.result}-example-s3-bucket"

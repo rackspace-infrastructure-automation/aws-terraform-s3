@@ -18,15 +18,21 @@ variable "allowed_origins" {
 }
 
 variable "bucket_acl" {
-  description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
+  description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
   type        = string
-  default     = "bucket-owner-full-control"
+  default     = "private"
 }
 
 variable "bucket_logging" {
   description = "Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ_ACP permissions to the target bucket. i.e. true | false"
   type        = bool
   default     = false
+}
+
+variable "cost_center" {
+  description = "cost enter tag for resource cost auditing"
+  type        = string
+  default     = ""
 }
 
 variable "environment" {
