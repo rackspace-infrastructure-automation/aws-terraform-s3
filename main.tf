@@ -64,12 +64,13 @@ locals {
   # Bucket local variables
   ##############################################################
 
-  acl_list = ["authenticated-read", "aws-exec-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write", "private", "public-read", "public-read-write"]
+  acl_list = ["authenticated-read", "aws-exec-read", "log-delivery-write", "private", "public-read", "public-read-write"]
 
   default_tags = {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
     SkipBucket      = var.rax_mpu_cleanup_enabled ? null : "True"
+    CostCenter      = var.cost_center
   }
 
   ##############################################################
