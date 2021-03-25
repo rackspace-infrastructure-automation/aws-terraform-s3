@@ -9,7 +9,7 @@ It will not do s3 origin, which is in another module.
 module "s3" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
 
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   bucket_logging                             = false
   environment                                = "Development"
   lifecycle_enabled                          = true
@@ -47,16 +47,33 @@ The following module variables were updated to better meet current Rackspace sty
 - `kms_master_key_id` -> `kms_key_id`
 - `bucket_tags` -> `tags`
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| aws | >= 2.7.0 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | aws | >= 2.7.0 |
 
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | allowed\_headers | Specifies which headers are allowed. | `list(string)` | `[]` | no |
 | allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list(string)` | `[]` | no |
 | allowed\_origins | (Required) Specifies which origins are allowed. | `list(string)` | `[]` | no |
@@ -97,4 +114,3 @@ The following module variables were updated to better meet current Rackspace sty
 | bucket\_region | The AWS region this bucket resides in. |
 | bucket\_website\_domain | The domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string. This is used to create Route 53 alias records. |
 | bucket\_website\_endpoint | The website endpoint, if the bucket is configured with a website. If not, this will be an empty string. |
-
