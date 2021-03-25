@@ -60,7 +60,7 @@ The following module variables were updated to better meet current Rackspace sty
 | allowed\_headers | Specifies which headers are allowed. | `list(string)` | `[]` | no |
 | allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list(string)` | `[]` | no |
 | allowed\_origins | (Required) Specifies which origins are allowed. | `list(string)` | `[]` | no |
-| bucket\_acl | Bucket ACL. Must be either authenticated-read, aws-exec-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl | `string` | `"bucket-owner-full-control"` | no |
+| bucket\_acl | Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl | `string` | `"private"` | no |
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | no |
 | expose\_headers | Specifies expose header in the response. | `list(string)` | `[]` | no |
