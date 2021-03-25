@@ -29,6 +29,12 @@ variable "bucket_logging" {
   default     = false
 }
 
+variable "cost_center" {
+  description = "cost enter tag for resource cost auditing"
+  type        = string
+  default     = ""
+}
+
 variable "environment" {
   description = "Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test']"
   type        = string

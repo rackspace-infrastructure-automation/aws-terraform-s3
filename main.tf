@@ -70,6 +70,7 @@ locals {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
     SkipBucket      = var.rax_mpu_cleanup_enabled ? null : "True"
+    CostCenter      = var.cost_center
   }
 
   ##############################################################
