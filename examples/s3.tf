@@ -17,7 +17,7 @@ module "s3" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
 
   bucket_logging                             = false
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   environment                                = "Development"
   lifecycle_enabled                          = true
   name                                       = "${random_string.s3_rstring.result}-example-s3-bucket"
@@ -43,7 +43,7 @@ module "s3_no_website" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
 
   bucket_logging                             = false
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   environment                                = "Development"
   lifecycle_enabled                          = true
   name                                       = "${random_string.s3_rstring.result}-example-s3-bucket-no-web"
