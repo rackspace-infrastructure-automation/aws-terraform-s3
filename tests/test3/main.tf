@@ -20,7 +20,7 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   bucket_logging                             = false
   environment                                = "Development"
   lifecycle_enabled                          = true

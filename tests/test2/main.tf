@@ -23,7 +23,7 @@ module "s3" {
   allowed_headers                            = ["*"]
   allowed_methods                            = ["PUT", "POST"]
   allowed_origins                            = ["*"]
-  bucket_acl                                 = "bucket-owner-full-control"
+  bucket_acl                                 = "private"
   bucket_logging                             = false
   environment                                = "Development"
   lifecycle_enabled                          = true

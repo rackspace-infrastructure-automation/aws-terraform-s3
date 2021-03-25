@@ -10,7 +10,7 @@
  * module "s3" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.3"
  *
- *   bucket_acl                                 = "bucket-owner-full-control"
+ *   bucket_acl                                 = "private"
  *   bucket_logging                             = false
  *   environment                                = "Development"
  *   lifecycle_enabled                          = true
@@ -64,7 +64,7 @@ locals {
   # Bucket local variables
   ##############################################################
 
-  acl_list = ["authenticated-read", "aws-exec-read", "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write", "private", "public-read", "public-read-write"]
+  acl_list = ["authenticated-read", "aws-exec-read", "log-delivery-write", "private", "public-read", "public-read-write"]
 
   default_tags = {
     ServiceProvider = "Rackspace"

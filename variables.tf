@@ -18,9 +18,9 @@ variable "allowed_origins" {
 }
 
 variable "bucket_acl" {
-  description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
+  description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
   type        = string
-  default     = "bucket-owner-full-control"
+  default     = "private"
 }
 
 variable "bucket_logging" {
