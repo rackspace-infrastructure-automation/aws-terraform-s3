@@ -69,6 +69,7 @@ No Modules.
 | Name |
 |------|
 | [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_public_access_block) |
 
 ## Inputs
 
@@ -77,6 +78,11 @@ No Modules.
 | allowed\_headers | Specifies which headers are allowed. | `list(string)` | `[]` | no |
 | allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list(string)` | `[]` | no |
 | allowed\_origins | (Required) Specifies which origins are allowed. | `list(string)` | `[]` | no |
+| block\_public\_access | Block various forms of public access on a per bucket level | `bool` | `false` | no |
+| block\_public\_access\_acl | Related to block\_public\_access. PUT Bucket acl and PUT Object acl calls will fail if the specified ACL allows public access. PUT Object calls will fail if the request includes an object ACL. | `bool` | `false` | no |
+| block\_public\_access\_ignore\_acl | Related to block\_public\_access. Ignore public ACLs on this bucket and any objects that it contains. | `bool` | `false` | no |
+| block\_public\_access\_policy | Related to block\_public\_access. Reject calls to PUT Bucket policy if the specified bucket policy allows public access. | `bool` | `false` | no |
+| block\_public\_access\_restrict\_bucket | Related to block\_public\_access. Only the bucket owner and AWS Services can access this buckets if it has a public policy. | `bool` | `false` | no |
 | bucket\_acl | Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl | `string` | `"private"` | no |
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | no |
