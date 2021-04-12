@@ -38,25 +38,25 @@ variable "block_public_access" {
 variable "block_public_access_acl" {
   description = "Related to block_public_access. PUT Bucket acl and PUT Object acl calls will fail if the specified ACL allows public access. PUT Object calls will fail if the request includes an object ACL."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_access_ignore_acl" {
   description = "Related to block_public_access. Ignore public ACLs on this bucket and any objects that it contains."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_access_policy" {
   description = "Related to block_public_access. Reject calls to PUT Bucket policy if the specified bucket policy allows public access."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_access_restrict_bucket" {
   description = "Related to block_public_access. Only the bucket owner and AWS Services can access this buckets if it has a public policy."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "environment" {
