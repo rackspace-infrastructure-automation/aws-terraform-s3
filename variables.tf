@@ -142,6 +142,27 @@ variable "object_expiration_days" {
   default     = 0
 }
 
+variable "object_lock_enabled" {
+  description = "Indicates whether this bucket has an Object Lock configuration enabled. Disabled by default. You can only enable S3 Object Lock for new buckets. If you need to turn on S3 Object Lock for an existing bucket, please contact AWS Support."
+  type        = bool
+  default     = false
+}
+variable "object_lock_mode" {
+  description = "The default Object Lock retention mode you want to apply to new objects placed in this bucket. Valid values are GOVERNANCE and COMPLIANCE. Default is GOVERNANCE (allows administrative override)."
+  type        = string
+  default     = "GOVERNANCE"
+}
+variable "object_lock_retention_days" {
+  description = "The retention of the object lock in days. Either days or years must be specified, but not both."
+  type        = number
+  default     = null
+}
+variable "object_lock_retention_years" {
+  description = "The retention of the object lock in years. Either days or years must be specified, but not both."
+  type        = number
+  default     = null
+}
+
 variable "rax_mpu_cleanup_enabled" {
   description = "Enable Rackspace default values for cleanup of Multipart Uploads."
   type        = bool
