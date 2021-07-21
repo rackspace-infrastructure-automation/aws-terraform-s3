@@ -68,8 +68,8 @@ No Modules.
 
 | Name |
 |------|
-| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
-| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_public_access_block) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) |
+| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) |
 
 ## Inputs
 
@@ -99,6 +99,10 @@ No Modules.
 | noncurrent\_version\_transition\_glacier\_days | Indicates after how many days we are moving previous versions to Glacier.  Should be 0 to disable or at least 30 days longer than noncurrent\_version\_transition\_ia\_days. i.e. 0 to disable, 1-999 otherwise | `number` | `0` | no |
 | noncurrent\_version\_transition\_ia\_days | Indicates after how many days we are moving previous version objects to Standard-IA storage. Set to 0 to disable. | `number` | `0` | no |
 | object\_expiration\_days | Indicates after how many days we are deleting current version of objects. Set to 0 to disable or at least 365 days longer than TransitionInDaysGlacier. i.e. 0 to disable, otherwise 1-999 | `number` | `0` | no |
+| object\_lock\_enabled | Indicates whether this bucket has an Object Lock configuration enabled. Disabled by default. You can only enable S3 Object Lock for new buckets. If you need to turn on S3 Object Lock for an existing bucket, please contact AWS Support. | `bool` | `false` | no |
+| object\_lock\_mode | The default Object Lock retention mode you want to apply to new objects placed in this bucket. Valid values are GOVERNANCE and COMPLIANCE. Default is GOVERNANCE (allows administrative override). | `string` | `"GOVERNANCE"` | no |
+| object\_lock\_retention\_days | The retention of the object lock in days. Either days or years must be specified, but not both. | `number` | `null` | no |
+| object\_lock\_retention\_years | The retention of the object lock in years. Either days or years must be specified, but not both. | `number` | `null` | no |
 | rax\_mpu\_cleanup\_enabled | Enable Rackspace default values for cleanup of Multipart Uploads. | `bool` | `true` | no |
 | sse\_algorithm | The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none | `string` | `"AES256"` | no |
 | tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | `map(string)` | `{}` | no |
