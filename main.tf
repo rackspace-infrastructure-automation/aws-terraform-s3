@@ -315,9 +315,11 @@ resource "aws_s3_bucket" "s3_bucket" {
       dynamic "rule" {
         for_each = lookup(object_lock_configuration.value, "rule", [])
         content {
-          mode  = lookup(rule.value, "mode", "GOVERNANCE")
-          days  = lookup(rule.value, "days", null)
-          years = lookup(rule.value, "years", null)
+          default_retention {
+            mode  = lookup(rule.value, "mode", "GOVERNANCE")
+            days  = lookup(rule.value, "days", null)
+            years = lookup(rule.value, "years", null)
+          }
         }
       }
     }
