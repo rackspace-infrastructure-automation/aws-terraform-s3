@@ -180,6 +180,25 @@ locals {
   }
 
   ##############################################################
+  # Bucket object lock local variables
+  ##############################################################
+
+  object_lock_rule = {
+    Enabled = [
+      {
+        rule = [
+          {
+            mode  = var.object_lock_mode
+            days  = var.object_lock_retention_days
+            years = var.object_lock_retention_years
+          },
+        ]
+      },
+    ]
+    Disabled = []
+  }
+
+  ##############################################################
   # Server side encryption rule local variables
   ##############################################################
 
@@ -286,6 +305,23 @@ resource "aws_s3_bucket" "s3_bucket" {
     content {
       target_bucket = logging.value.target_bucket
       target_prefix = lookup(logging.value, "target_prefix", null)
+    }
+  }
+
+  dynamic "object_lock_configuration" {
+    for_each = local.object_lock_rule[var.object_lock_enabled ? "Enabled" : "Disabled"]
+    content {
+      object_lock_enabled = "Enabled" // The only valid value when this configuration is present
+      dynamic "rule" {
+        for_each = lookup(object_lock_configuration.value, "rule", [])
+        content {
+          default_retention {
+            mode  = lookup(rule.value, "mode", "GOVERNANCE")
+            days  = lookup(rule.value, "days", null)
+            years = lookup(rule.value, "years", null)
+          }
+        }
+      }
     }
   }
 
