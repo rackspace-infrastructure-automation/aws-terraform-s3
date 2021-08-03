@@ -372,3 +372,30 @@ resource "aws_s3_bucket_public_access_block" "block_public_access_settings" {
   ignore_public_acls      = var.block_public_access_ignore_acl
   restrict_public_buckets = var.block_public_access_restrict_bucket
 }
+
+##############################################################
+# Ownership Control Settings
+##############################################################
+
+resource "aws_s3_bucket_ownership_controls" "ownership_controls" {
+  count  = var.ownership_controls != "" ? 1 : 0
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  rule {
+    object_ownership = var.ownership_controls
+  }
+
+  depends_on = [aws_s3_bucket_public_access_block.block_public_access_settings]
+}
+
+##############################################################
+# S3 Bucket policy
+##############################################################
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  count  = var.bucket_policy != "" ? 1 : 0
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  policy = var.bucket_policy
+
+  depends_on = [aws_s3_bucket_public_access_block.block_public_access_settings]
+}
