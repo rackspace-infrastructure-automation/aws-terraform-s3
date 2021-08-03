@@ -392,7 +392,7 @@ resource "aws_s3_bucket_ownership_controls" "ownership_controls" {
 # S3 Bucket policy
 ##############################################################
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  count  = var.bucket_policy != "" ? 1 : 0
+  count  = var.enable_bucket_policy ? 1 : 0
   bucket = aws_s3_bucket.s3_bucket.id
 
   policy = var.bucket_policy
