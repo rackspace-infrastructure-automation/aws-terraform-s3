@@ -120,8 +120,8 @@ module "s3_bucket_with_policy" {
   website_index                              = "index.html"
 
 
-  ownership_controls                         = "BucketOwnerPreferred"
-  bucket_policy                              = jsonencode({
+  ownership_controls = "BucketOwnerPreferred"
+  bucket_policy = jsonencode({
     Version = "2012-10-17"
     Id      = "CloudTrailBucketPolicy"
     Statement = [

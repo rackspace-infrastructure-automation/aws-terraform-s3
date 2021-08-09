@@ -69,6 +69,8 @@ No Modules.
 | Name |
 |------|
 | [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_ownership_controls](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_ownership_controls) |
+| [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_policy) |
 | [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_public_access_block) |
 
 ## Inputs
@@ -78,13 +80,15 @@ No Modules.
 | allowed\_headers | Specifies which headers are allowed. | `list(string)` | `[]` | no |
 | allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list(string)` | `[]` | no |
 | allowed\_origins | (Required) Specifies which origins are allowed. | `list(string)` | `[]` | no |
-| block\_public\_access | Block various forms of public access on a per bucket level | `bool` | `false` | no |
+| block\_public\_access | Block various forms of public access on a per bucket level. | `bool` | `false` | no |
 | block\_public\_access\_acl | Related to block\_public\_access. PUT Bucket acl and PUT Object acl calls will fail if the specified ACL allows public access. PUT Object calls will fail if the request includes an object ACL. | `bool` | `true` | no |
 | block\_public\_access\_ignore\_acl | Related to block\_public\_access. Ignore public ACLs on this bucket and any objects that it contains. | `bool` | `true` | no |
 | block\_public\_access\_policy | Related to block\_public\_access. Reject calls to PUT Bucket policy if the specified bucket policy allows public access. | `bool` | `true` | no |
 | block\_public\_access\_restrict\_bucket | Related to block\_public\_access. Only the bucket owner and AWS Services can access this buckets if it has a public policy. | `bool` | `true` | no |
 | bucket\_acl | Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl | `string` | `"private"` | no |
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
+| bucket\_policy | A valid bucket policy JSON document to attach to this bucket. | `string` | `""` | no |
+| enable\_bucket\_policy | A boolean that indicates whether a custom bucket policy should be attached to his bucket. | `bool` | `false` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | no |
 | expose\_headers | Specifies expose header in the response. | `list(string)` | `[]` | no |
 | force\_destroy\_bucket | A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. | `bool` | `false` | no |
@@ -103,6 +107,7 @@ No Modules.
 | object\_lock\_mode | The default Object Lock retention mode you want to apply to new objects placed in this bucket. Valid values are GOVERNANCE and COMPLIANCE. Default is GOVERNANCE (allows administrative override). | `string` | `"GOVERNANCE"` | no |
 | object\_lock\_retention\_days | The retention of the object lock in days. Either days or years must be specified, but not both. | `number` | `null` | no |
 | object\_lock\_retention\_years | The retention of the object lock in years. Either days or years must be specified, but not both. | `number` | `null` | no |
+| ownership\_controls | S3 Bucket Ownership Controls. Valid values are BucketOwnerPreferred and ObjectWriter. | `string` | `""` | no |
 | rax\_mpu\_cleanup\_enabled | Enable Rackspace default values for cleanup of Multipart Uploads. | `bool` | `true` | no |
 | sse\_algorithm | The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none | `string` | `"AES256"` | no |
 | tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | `map(string)` | `{}` | no |
