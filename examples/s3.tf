@@ -14,7 +14,7 @@ resource "random_string" "s3_rstring" {
 }
 
 module "s3" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.7"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.8"
 
   bucket_logging                             = false
   bucket_acl                                 = "private"
@@ -43,7 +43,7 @@ module "s3" {
 
 
 module "s3_no_website" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.7"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.8"
 
   bucket_logging                             = false
   bucket_acl                                 = "private"
@@ -66,7 +66,7 @@ module "s3_no_website" {
 }
 
 module "s3_object_lock" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.7"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.8"
 
   bucket_acl                                 = "private"
   bucket_logging                             = false
@@ -96,7 +96,7 @@ module "s3_object_lock" {
 }
 
 module "s3_bucket_with_policy" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.7"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.8"
 
   bucket_acl                                 = "private"
   bucket_logging                             = false

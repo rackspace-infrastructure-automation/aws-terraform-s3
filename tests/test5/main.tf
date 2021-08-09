@@ -8,10 +8,7 @@ terraform {
 
 provider "aws" {
   version = "~> 3.0"
-  region  = "eu-west-1"
-
-  shared_credentials_file = "/Users/martijnvandegrift/.aws/credentials"
-  profile                 = "martijnbinx"
+  region  = "us-west-2"
 }
 
 resource "random_string" "s3_rstring" {
