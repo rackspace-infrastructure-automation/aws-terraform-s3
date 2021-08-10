@@ -397,5 +397,5 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 
   policy = var.bucket_policy
 
-  depends_on = [aws_s3_bucket_public_access_block.block_public_access_settings]
+  depends_on = [aws_s3_bucket_ownership_controls.ownership_controls]
 }

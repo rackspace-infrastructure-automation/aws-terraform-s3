@@ -72,7 +72,7 @@ variable "environment" {
 }
 
 variable "enable_bucket_policy" {
-  description = "A boolean that indicates whether a custom bucket policy should be attached to his bucket."
+  description = "A boolean that indicates whether a custom bucket policy should be attached to this bucket."
   type        = bool
   default     = false
 }
