@@ -29,8 +29,14 @@ variable "bucket_logging" {
   default     = false
 }
 
+variable "bucket_policy" {
+  description = "A valid bucket policy JSON document to attach to this bucket."
+  type        = string
+  default     = ""
+}
+
 variable "block_public_access" {
-  description = "Block various forms of public access on a per bucket level"
+  description = "Block various forms of public access on a per bucket level."
   type        = bool
   default     = false
 }
@@ -63,6 +69,12 @@ variable "environment" {
   description = "Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test']"
   type        = string
   default     = "Development"
+}
+
+variable "enable_bucket_policy" {
+  description = "A boolean that indicates whether a custom bucket policy should be attached to this bucket."
+  type        = bool
+  default     = false
 }
 
 variable "expose_headers" {
@@ -161,6 +173,12 @@ variable "object_lock_retention_years" {
   description = "The retention of the object lock in years. Either days or years must be specified, but not both."
   type        = number
   default     = null
+}
+
+variable "ownership_controls" {
+  description = "S3 Bucket Ownership Controls. Valid values are BucketOwnerPreferred and ObjectWriter."
+  type        = string
+  default     = ""
 }
 
 variable "rax_mpu_cleanup_enabled" {
