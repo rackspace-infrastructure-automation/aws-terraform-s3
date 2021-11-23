@@ -32,16 +32,30 @@ module "s3" {
 
 Full working references are available at [examples](examples)
 
+## Requirements
+
+No requirements.
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | aws | n/a |
 
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | allowed\_headers | Specifies which headers are allowed. | `list` | `[]` | no |
 | allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list` | `[]` | no |
 | allowed\_origins | (Required) Specifies which origins are allowed. | `list` | `[]` | no |
@@ -80,4 +94,3 @@ Full working references are available at [examples](examples)
 | bucket\_hosted\_zone\_id | The Route 53 Hosted Zone ID for this bucket's region. |
 | bucket\_id | The name of the bucket. |
 | bucket\_region | The AWS region this bucket resides in. |
-
