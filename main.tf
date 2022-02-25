@@ -96,10 +96,11 @@ locals {
   lifecycle_rules = {
     enabled = [
       {
-        enabled                       = "${var.lifecycle_enabled}"
-        prefix                        = "${var.lifecycle_rule_prefix}"
-        expiration                    = "${local.object_expiration[local.object_expiration_config]}"
-        noncurrent_version_expiration = "${local.noncurrent_version_expiration[local.noncurrent_version_expiration_config]}"
+        enabled                                = "${var.lifecycle_enabled}"
+        prefix                                 = "${var.lifecycle_rule_prefix}"
+        expiration                             = "${local.object_expiration[local.object_expiration_config]}"
+        noncurrent_version_expiration          = "${local.noncurrent_version_expiration[local.noncurrent_version_expiration_config]}"
+        abort_incomplete_multipart_upload_days = 7
 
         transition = "${local.transitions}"
 
