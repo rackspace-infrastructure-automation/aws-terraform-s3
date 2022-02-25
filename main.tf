@@ -100,6 +100,7 @@ locals {
         prefix                        = "${var.lifecycle_rule_prefix}"
         expiration                    = "${local.object_expiration[local.object_expiration_config]}"
         noncurrent_version_expiration = "${local.noncurrent_version_expiration[local.noncurrent_version_expiration_config]}"
+        abort_incomplete_multipart_upload_days = "${var.abort_incomplete_multipart_upload_days}"
 
         transition = "${local.transitions}"
 
@@ -171,6 +172,4 @@ resource "aws_s3_bucket" "s3_bucket" {
   cors_rule = "${local.cors_rules[local.cors_rules_config]}"
 
   force_destroy = "${var.force_destroy_bucket}"
-
-  abort_incomplete_multipart_upload_days = 7
 }

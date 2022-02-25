@@ -45,6 +45,13 @@ variable "lifecycle_enabled" {
   default     = false
 }
 
+variable "abort_incomplete_multipart_upload_days" {
+  description = "Abort Incomplete Multipart Upload Days i.e. 7 | 0"
+  type        = "string"
+  default     = ""
+}
+
+
 variable "lifecycle_rule_prefix" {
   description = "Object keyname prefix identifying one or more objects to which the rule applies. Set as an empty string to target the whole bucket."
   type        = "string"
