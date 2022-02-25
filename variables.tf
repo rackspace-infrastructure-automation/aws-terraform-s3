@@ -48,7 +48,7 @@ variable "lifecycle_enabled" {
 variable "abort_incomplete_multipart_upload_days" {
   description = "Abort Incomplete Multipart Upload Days i.e. 7 | 0"
   type        = "string"
-  default     = "7"
+  default     = ""
 }
 
 
