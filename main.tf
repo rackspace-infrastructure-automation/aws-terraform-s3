@@ -171,4 +171,6 @@ resource "aws_s3_bucket" "s3_bucket" {
   cors_rule = "${local.cors_rules[local.cors_rules_config]}"
 
   force_destroy = "${var.force_destroy_bucket}"
+
+  abort_incomplete_multipart_upload_days = 7
 }
