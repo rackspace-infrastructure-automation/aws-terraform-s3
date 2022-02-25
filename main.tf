@@ -100,7 +100,7 @@ locals {
         prefix                                 = "${var.lifecycle_rule_prefix}"
         expiration                             = "${local.object_expiration[local.object_expiration_config]}"
         noncurrent_version_expiration          = "${local.noncurrent_version_expiration[local.noncurrent_version_expiration_config]}"
-        abort_incomplete_multipart_upload_days = 7
+        abort_incomplete_multipart_upload_days = "${var.abort_incomplete_multipart_upload_days}"
 
         transition = "${local.transitions}"
 

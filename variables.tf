@@ -4,6 +4,12 @@ variable "bucket_acl" {
   default     = "bucket-owner-full-control"
 }
 
+variable "abort_incomplete_multipart_upload_days" {
+  description = "Abort Incomplete Multipart Upload Days i.e. 7 | 0"
+  type        = "string"
+  default     = ""
+}
+
 variable "bucket_name" {
   description = "The name of the S3 bucket for the access logs. The bucket name can contain only lowercase letters, numbers, periods (.), and dashes (-). Must be globally unique. If changed, forces a new resource."
   type        = "string"
