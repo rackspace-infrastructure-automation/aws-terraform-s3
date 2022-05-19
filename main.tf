@@ -218,6 +218,8 @@ locals {
 
 resource "aws_s3_bucket" "s3_bucket" {
   acl                 = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+  block_public_acls   = true
+  block_public_policy = true
   bucket              = var.name
   force_destroy       = var.force_destroy_bucket
   tags                = merge(var.tags, local.default_tags)
