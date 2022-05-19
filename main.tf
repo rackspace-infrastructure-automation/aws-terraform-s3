@@ -217,12 +217,13 @@ locals {
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
-  acl           = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
-  block_public_acls = var.block_public_acls
+  acl                 = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+  block_public_acls   = var.block_public_acls
   block_public_policy = var.block_public_policy
-  bucket        = var.name
-  force_destroy = var.force_destroy_bucket
-  tags          = merge(var.tags, local.default_tags)
+  bucket              = var.name
+  bucket_acl          = var.bucket_acl
+  force_destroy       = var.force_destroy_bucket
+  tags                = merge(var.tags, local.default_tags)
 
   dynamic "cors_rule" {
     for_each = local.cors_rules[length(var.allowed_origins) > 0 ? "enabled" : "disabled"]
