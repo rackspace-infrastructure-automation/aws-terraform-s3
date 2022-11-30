@@ -51,14 +51,14 @@ The following module variables were updated to better meet current Rackspace sty
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
-| aws | >= 2.7.0 |
+| terraform | >= 0.13 |
+| aws | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.7.0 |
+| aws | ~> 3.0 |
 
 ## Modules
 
@@ -68,32 +68,38 @@ No Modules.
 
 | Name |
 |------|
-| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
-| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_public_access_block) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_acl) |
+| [aws_s3_bucket_cors_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_cors_configuration) |
+| [aws_s3_bucket_logging](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_logging) |
+| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_public_access_block) |
+| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
+| [aws_s3_bucket_versioning](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_versioning) |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| allowed\_headers | Specifies which headers are allowed. | `list(string)` | `[]` | no |
-| allowed\_methods | (Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD. | `list(string)` | `[]` | no |
-| allowed\_origins | (Required) Specifies which origins are allowed. | `list(string)` | `[]` | no |
+| abort\_incomplete\_multipart\_upload\_days | Abort Incomplete Multipart Upload Days i.e. 7 \| 0 | `number` | `7` | no |
 | block\_public\_access | Block various forms of public access on a per bucket level | `bool` | `false` | no |
 | block\_public\_access\_acl | Related to block\_public\_access. PUT Bucket acl and PUT Object acl calls will fail if the specified ACL allows public access. PUT Object calls will fail if the request includes an object ACL. | `bool` | `true` | no |
 | block\_public\_access\_ignore\_acl | Related to block\_public\_access. Ignore public ACLs on this bucket and any objects that it contains. | `bool` | `true` | no |
 | block\_public\_access\_policy | Related to block\_public\_access. Reject calls to PUT Bucket policy if the specified bucket policy allows public access. | `bool` | `true` | no |
 | block\_public\_access\_restrict\_bucket | Related to block\_public\_access. Only the bucket owner and AWS Services can access this buckets if it has a public policy. | `bool` | `true` | no |
 | bucket\_acl | Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl | `string` | `"private"` | no |
+| bucket\_key\_enabled | Whether or not to use Amazon S3 Bucket Keys for SSE-KMS. | `bool` | `false` | no |
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
+| cors | Enable CORS Rules. Rules must be defined in the variable cors\_rules | `bool` | `false` | no |
+| cors\_rule | List of maps containing rules for Cross-Origin Resource Sharing. | `any` | `[]` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | no |
-| expose\_headers | Specifies expose header in the response. | `list(string)` | `[]` | no |
+| expected\_bucket\_owner | The account ID of the expected bucket owner | `string` | `null` | no |
 | force\_destroy\_bucket | A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. | `bool` | `false` | no |
 | kms\_key\_id | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse\_algorithm as aws:kms. | `string` | `""` | no |
 | lifecycle\_enabled | Enable object lifecycle management. i.e. true \| false | `bool` | `false` | no |
 | lifecycle\_rule\_prefix | Object keyname prefix identifying one or more objects to which the rule applies. Set as an empty string to target the whole bucket. | `string` | `""` | no |
 | logging\_bucket\_name | Name of the existing bucket where the logs will be stored. | `string` | `""` | no |
 | logging\_bucket\_prefix | Prefix for all log object keys. i.e. logs/ | `string` | `""` | no |
-| max\_age\_seconds | Specifies time in seconds that browser can cache the response for a preflight request. | `number` | `600` | no |
+| mfa\_delete | Specifies whether MFA delete is enabled in the bucket versioning configuration | `bool` | `false` | no |
 | name | The name of the S3 bucket for the access logs. The bucket name can contain only lowercase letters, numbers, periods (.), and dashes (-). Must be globally unique. If changed, forces a new resource. | `string` | n/a | yes |
 | noncurrent\_version\_expiration\_days | Indicates after how many days we are deleting previous version of objects.  Set to 0 to disable or at least 365 days longer than noncurrent\_version\_transition\_glacier\_days. i.e. 0 to disable, 1-999 otherwise | `number` | `0` | no |
 | noncurrent\_version\_transition\_glacier\_days | Indicates after how many days we are moving previous versions to Glacier.  Should be 0 to disable or at least 30 days longer than noncurrent\_version\_transition\_ia\_days. i.e. 0 to disable, 1-999 otherwise | `number` | `0` | no |
@@ -108,7 +114,7 @@ No Modules.
 | tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | `map(string)` | `{}` | no |
 | transition\_to\_glacier\_days | Indicates after how many days we are moving current versions to Glacier.  Should be 0 to disable or at least 30 days longer than transition\_to\_ia\_days. i.e. 0 to disable, otherwise 1-999 | `number` | `0` | no |
 | transition\_to\_ia\_days | Indicates after how many days we are moving current objects to Standard-IA storage. i.e. 0 to disable, otherwise 1-999 | `number` | `0` | no |
-| versioning | Enable bucket versioning. i.e. true \| false | `bool` | `false` | no |
+| versioning | Enable bucket versioning. | `bool` | `false` | no |
 | website | Use bucket as a static website. i.e. true \| false | `bool` | `false` | no |
 | website\_error | Location of Error HTML file. i.e. error.html | `string` | `"error.html"` | no |
 | website\_index | Location of Index HTML file. i.e index.html | `string` | `"index.html"` | no |

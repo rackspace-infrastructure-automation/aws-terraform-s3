@@ -51,10 +51,13 @@
  */
 
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13"
 
   required_providers {
-    aws = ">= 2.7.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -72,22 +75,7 @@ locals {
     SkipBucket      = var.rax_mpu_cleanup_enabled ? null : "True"
   }
 
-  ##############################################################
-  # CORS rules local variables
-  ##############################################################
-
-  cors_rules = {
-    enabled = [
-      {
-        allowed_headers = var.allowed_headers
-        allowed_methods = var.allowed_methods
-        allowed_origins = var.allowed_origins
-        expose_headers  = var.expose_headers
-        max_age_seconds = var.max_age_seconds
-      },
-    ]
-    disabled = []
-  }
+  cors_rules = try(jsondecode(var.cors_rule), var.cors_rule)
 
   ##############################################################
   # Lifecycle Rules local variables
@@ -114,7 +102,7 @@ locals {
     ]
     mpu_cleanup_enabled = [
       {
-        abort_incomplete_multipart_upload_days = 7
+        abort_incomplete_multipart_upload_days = var.abort_incomplete_multipart_upload_days
         enabled                                = true
         id                                     = "rax-cleanup-incomplete-mpu-objects"
         expiration                             = [{}]
@@ -166,20 +154,6 @@ locals {
   }
 
   ##############################################################
-  # Bucket Logging local variables
-  ##############################################################
-
-  bucket_logging = {
-    enabled = [
-      {
-        target_bucket = var.logging_bucket_name
-        target_prefix = var.logging_bucket_prefix
-      },
-    ]
-    disabled = []
-  }
-
-  ##############################################################
   # Bucket object lock local variables
   ##############################################################
 
@@ -199,28 +173,6 @@ locals {
   }
 
   ##############################################################
-  # Server side encryption rule local variables
-  ##############################################################
-
-  server_side_encryption_rule = {
-    enabled = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                kms_master_key_id = var.kms_key_id
-                sse_algorithm     = var.sse_algorithm
-              },
-            ]
-          },
-        ]
-      },
-    ]
-    disabled = []
-  }
-
-  ##############################################################
   # Bucket website local variables
   ##############################################################
 
@@ -236,21 +188,9 @@ locals {
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
-  acl           = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
   bucket        = var.name
   force_destroy = var.force_destroy_bucket
   tags          = merge(var.tags, local.default_tags)
-
-  dynamic "cors_rule" {
-    for_each = local.cors_rules[length(var.allowed_origins) > 0 ? "enabled" : "disabled"]
-    content {
-      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
-      allowed_methods = cors_rule.value.allowed_methods
-      allowed_origins = cors_rule.value.allowed_origins
-      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
-      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
-    }
-  }
 
   dynamic "lifecycle_rule" {
     for_each = concat(
@@ -300,14 +240,6 @@ resource "aws_s3_bucket" "s3_bucket" {
     }
   }
 
-  dynamic "logging" {
-    for_each = local.bucket_logging[var.bucket_logging ? "enabled" : "disabled"]
-    content {
-      target_bucket = logging.value.target_bucket
-      target_prefix = lookup(logging.value, "target_prefix", null)
-    }
-  }
-
   dynamic "object_lock_configuration" {
     for_each = local.object_lock_rule[var.object_lock_enabled ? "Enabled" : "Disabled"]
     content {
@@ -325,27 +257,6 @@ resource "aws_s3_bucket" "s3_bucket" {
     }
   }
 
-  dynamic "server_side_encryption_configuration" {
-    for_each = local.server_side_encryption_rule[var.sse_algorithm == "none" ? "disabled" : "enabled"]
-    content {
-      dynamic "rule" {
-        for_each = lookup(server_side_encryption_configuration.value, "rule", [])
-        content {
-          dynamic "apply_server_side_encryption_by_default" {
-            for_each = lookup(rule.value, "apply_server_side_encryption_by_default", [])
-            content {
-              kms_master_key_id = lookup(apply_server_side_encryption_by_default.value, "kms_master_key_id", null)
-              sse_algorithm     = apply_server_side_encryption_by_default.value.sse_algorithm
-            }
-          }
-        }
-      }
-    }
-  }
-
-  versioning {
-    enabled = var.versioning
-  }
 
   dynamic "website" {
     for_each = local.bucket_website_config[var.website ? "enabled" : "disabled"]
@@ -371,4 +282,74 @@ resource "aws_s3_bucket_public_access_block" "block_public_access_settings" {
   block_public_policy     = var.block_public_access_policy
   ignore_public_acls      = var.block_public_access_ignore_acl
   restrict_public_buckets = var.block_public_access_restrict_bucket
+}
+
+##############################################################
+# S3 Access Control List
+##############################################################
+resource "aws_s3_bucket_acl" "s3_acl" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  acl    = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+}
+
+
+##############################################################
+# S3 Versioning Configuration
+##############################################################
+resource "aws_s3_bucket_versioning" "s3_versioning" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  versioning_configuration {
+    status     = var.versioning ? "Enabled" : "Disabled"
+    mfa_delete = var.mfa_delete ? "Enabled" : "Disabled"
+  }
+}
+
+##############################################################
+# S3 Logging Configuration
+##############################################################
+resource "aws_s3_bucket_logging" "s3_logging" {
+  count = var.bucket_logging ? 1 : 0
+
+  bucket        = aws_s3_bucket.s3_bucket.id
+  target_bucket = var.logging_bucket_name
+  target_prefix = var.logging_bucket_prefix
+}
+
+##############################################################
+# S3 Server Side Encryption (SSE) Configuration
+##############################################################
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
+  count = var.sse_algorithm == "none" ? 0 : 1
+
+  bucket = aws_s3_bucket.s3_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = var.sse_algorithm
+      kms_master_key_id = var.kms_key_id
+    }
+    bucket_key_enabled = var.bucket_key_enabled
+  }
+}
+
+##############################################################
+# S3 CORS Configuration
+##############################################################
+resource "aws_s3_bucket_cors_configuration" "this" {
+  count = var.cors ? 1 : 0
+
+  bucket                = aws_s3_bucket.s3_bucket.id
+  expected_bucket_owner = var.expected_bucket_owner
+
+  dynamic "cors_rule" {
+    for_each = local.cors_rules
+
+    content {
+      id              = try(cors_rule.value.id, null)
+      allowed_methods = cors_rule.value.allowed_methods
+      allowed_origins = cors_rule.value.allowed_origins
+      allowed_headers = try(cors_rule.value.allowed_headers, null)
+      expose_headers  = try(cors_rule.value.expose_headers, null)
+      max_age_seconds = try(cors_rule.value.max_age_seconds, null)
+    }
+  }
 }

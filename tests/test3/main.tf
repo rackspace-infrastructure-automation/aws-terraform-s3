@@ -43,3 +43,34 @@ module "s3" {
     LeftSaid  = "George"
   }
 }
+
+module "s3_logging_test" {
+  source = "../../module"
+
+  bucket_acl                                 = "private"
+  bucket_logging                             = true
+  logging_bucket_name                        = module.s3.bucket_id
+  logging_bucket_prefix                      = "logs/"
+  environment                                = "Development"
+  lifecycle_enabled                          = true
+  name                                       = "${random_string.s3_rstring.result}-example-s3-log-bucket"
+  noncurrent_version_expiration_days         = "425"
+  noncurrent_version_transition_glacier_days = "60"
+  noncurrent_version_transition_ia_days      = "30"
+  object_expiration_days                     = "425"
+  rax_mpu_cleanup_enabled                    = true
+  transition_to_glacier_days                 = "60"
+  transition_to_ia_days                      = "30"
+  versioning                                 = true
+  kms_key_id                                 = "aws/s3"
+  sse_algorithm                              = "aws:kms"
+  bucket_key_enabled                         = true
+
+
+  tags = {
+    RightSaid = "Fred"
+    LeftSaid  = "George"
+  }
+
+  depends_on = [module.s3]
+}
