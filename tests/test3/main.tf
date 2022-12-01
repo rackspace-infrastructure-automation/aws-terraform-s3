@@ -1,76 +1,162 @@
 ###
-# This test adds the sse_algorithm option 'none' and disabled MPU cleanup
+# Complex Lifecycle Tests
 ###
 
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+
+    }
+  }
 }
 
 provider "aws" {
-  version = "~> 3.0"
-  region  = "us-west-2"
+  region = "us-west-2"
 }
 
 resource "random_string" "s3_rstring" {
-  length  = 18
+  length  = 16
   special = false
   upper   = false
 }
 
-module "s3" {
+module "s3_lifecycle" {
   source = "../../module"
 
-  bucket_acl                                 = "private"
-  bucket_logging                             = false
-  environment                                = "Development"
-  lifecycle_enabled                          = true
-  name                                       = "${random_string.s3_rstring.result}-example-s3-bucket"
-  noncurrent_version_expiration_days         = "425"
-  noncurrent_version_transition_glacier_days = "60"
-  noncurrent_version_transition_ia_days      = "30"
-  object_expiration_days                     = "425"
-  rax_mpu_cleanup_enabled                    = false
-  sse_algorithm                              = "none"
-  transition_to_glacier_days                 = "60"
-  transition_to_ia_days                      = "30"
-  versioning                                 = true
-  website                                    = true
-  website_error                              = "error.html"
-  website_index                              = "index.html"
+  bucket_acl        = "private"
+  bucket_logging    = false
+  environment       = "Development"
+  name              = "${random_string.s3_rstring.result}-example-s3-bucket"
+  versioning        = true
+  lifecycle_enabled = true
+  lifecycle_rule = [
+    {
+      id      = "log"
+      enabled = true
 
-  tags = {
-    RightSaid = "Fred"
-    LeftSaid  = "George"
+      filter = {
+        tags = {
+          some    = "value"
+          another = "value2"
+        }
+      }
+
+      transition = [
+        {
+          days          = 30
+          storage_class = "ONEZONE_IA"
+          }, {
+          days          = 60
+          storage_class = "GLACIER"
+        }
+      ]
+    },
+    {
+      id                                     = "Default MPU Cleanup Rule."
+      enabled                                = true
+      abort_incomplete_multipart_upload_days = 7
+
+      noncurrent_version_transition = [
+        {
+          days          = 30
+          storage_class = "STANDARD_IA"
+        },
+        {
+          days          = 60
+          storage_class = "ONEZONE_IA"
+        },
+        {
+          days          = 90
+          storage_class = "GLACIER"
+        },
+      ]
+
+      noncurrent_version_expiration = {
+        days = 300
+      }
+    },
+    {
+      id      = "log2"
+      enabled = true
+
+      filter = {
+        prefix                   = "log1/"
+        object_size_greater_than = 200000
+        object_size_less_than    = 500000
+        tags = {
+          some    = "value"
+          another = "value2"
+        }
+      }
+
+      noncurrent_version_transition = [
+        {
+          days          = 30
+          storage_class = "STANDARD_IA"
+        },
+      ]
+
+      noncurrent_version_expiration = {
+        days = 300
+      }
+    },
+  ]
+
+  intelligent_tiering = {
+    general = {
+      status = "Enabled"
+      filter = {
+        prefix = "/"
+        tags = {
+          Environment = "dev"
+        }
+      }
+      tiering = {
+        ARCHIVE_ACCESS = {
+          days = 180
+        }
+      }
+    },
+    documents = {
+      status = false
+      filter = {
+        prefix = "documents/"
+      }
+      tiering = {
+        ARCHIVE_ACCESS = {
+          days = 125
+        }
+        DEEP_ARCHIVE_ACCESS = {
+          days = 200
+        }
+      }
+    }
   }
-}
 
-module "s3_logging_test" {
-  source = "../../module"
-
-  bucket_acl                                 = "private"
-  bucket_logging                             = true
-  logging_bucket_name                        = module.s3.bucket_id
-  logging_bucket_prefix                      = "logs/"
-  environment                                = "Development"
-  lifecycle_enabled                          = true
-  name                                       = "${random_string.s3_rstring.result}-example-s3-log-bucket"
-  noncurrent_version_expiration_days         = "425"
-  noncurrent_version_transition_glacier_days = "60"
-  noncurrent_version_transition_ia_days      = "30"
-  object_expiration_days                     = "425"
-  rax_mpu_cleanup_enabled                    = true
-  transition_to_glacier_days                 = "60"
-  transition_to_ia_days                      = "30"
-  versioning                                 = true
-  kms_key_id                                 = "aws/s3"
-  sse_algorithm                              = "aws:kms"
-  bucket_key_enabled                         = true
-
-
-  tags = {
-    RightSaid = "Fred"
-    LeftSaid  = "George"
-  }
-
-  depends_on = [module.s3]
+  metric_configuration = [
+    {
+      name = "documents"
+      filter = {
+        prefix = "documents/"
+        tags = {
+          priority = "high"
+        }
+      }
+    },
+    {
+      name = "other"
+      filter = {
+        tags = {
+          production = "true"
+        }
+      }
+    },
+    {
+      name = "all"
+    }
+  ]
 }
