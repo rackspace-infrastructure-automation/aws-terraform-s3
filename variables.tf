@@ -71,16 +71,22 @@ variable "lifecycle_enabled" {
   default     = false
 }
 
-variable "lifecycle_rule_prefix" {
-  description = "Object keyname prefix identifying one or more objects to which the rule applies. Set as an empty string to target the whole bucket."
-  type        = string
-  default     = ""
+variable "lifecycle_rule" {
+  description = "List of maps containing configuration of object lifecycle management."
+  type        = any
+  default     = []
 }
 
-variable "abort_incomplete_multipart_upload_days" {
-  description = "Abort Incomplete Multipart Upload Days i.e. 7 | 0"
-  type        = number
-  default     = 7
+variable "intelligent_tiering" {
+  description = "Map containing intelligent tiering configuration."
+  type        = any
+  default     = {}
+}
+
+variable "metric_configuration" {
+  description = "Map containing bucket metric configuration."
+  type        = any
+  default     = []
 }
 
 variable "logging_bucket_name" {
@@ -100,24 +106,6 @@ variable "name" {
   type        = string
 }
 
-variable "noncurrent_version_expiration_days" {
-  description = "Indicates after how many days we are deleting previous version of objects.  Set to 0 to disable or at least 365 days longer than noncurrent_version_transition_glacier_days. i.e. 0 to disable, 1-999 otherwise"
-  type        = number
-  default     = 0
-}
-
-variable "noncurrent_version_transition_glacier_days" {
-  description = "Indicates after how many days we are moving previous versions to Glacier.  Should be 0 to disable or at least 30 days longer than noncurrent_version_transition_ia_days. i.e. 0 to disable, 1-999 otherwise"
-  type        = number
-  default     = 0
-}
-
-variable "noncurrent_version_transition_ia_days" {
-  description = "Indicates after how many days we are moving previous version objects to Standard-IA storage. Set to 0 to disable."
-  type        = number
-  default     = 0
-}
-
 variable "object_expiration_days" {
   description = "Indicates after how many days we are deleting current version of objects. Set to 0 to disable or at least 365 days longer than TransitionInDaysGlacier. i.e. 0 to disable, otherwise 1-999"
   type        = number
@@ -129,26 +117,29 @@ variable "object_lock_enabled" {
   type        = bool
   default     = false
 }
+
+variable "object_lock_token" {
+  description = "A token to allow Object Lock to be enabled for an existing bucket. You must contact AWS support for the bucket's 'Object Lock token'. The token is generated in the back-end when versioning is enabled on a bucket."
+  type        = string
+  default     = null
+}
+
 variable "object_lock_mode" {
   description = "The default Object Lock retention mode you want to apply to new objects placed in this bucket. Valid values are GOVERNANCE and COMPLIANCE. Default is GOVERNANCE (allows administrative override)."
   type        = string
   default     = "GOVERNANCE"
 }
+
 variable "object_lock_retention_days" {
   description = "The retention of the object lock in days. Either days or years must be specified, but not both."
   type        = number
   default     = null
 }
+
 variable "object_lock_retention_years" {
   description = "The retention of the object lock in years. Either days or years must be specified, but not both."
   type        = number
   default     = null
-}
-
-variable "rax_mpu_cleanup_enabled" {
-  description = "Enable Rackspace default values for cleanup of Multipart Uploads."
-  type        = bool
-  default     = true
 }
 
 variable "sse_algorithm" {
@@ -161,18 +152,6 @@ variable "tags" {
   description = "A map of tags to be applied to the Bucket. i.e {Environment='Development'}"
   type        = map(string)
   default     = {}
-}
-
-variable "transition_to_glacier_days" {
-  description = "Indicates after how many days we are moving current versions to Glacier.  Should be 0 to disable or at least 30 days longer than transition_to_ia_days. i.e. 0 to disable, otherwise 1-999"
-  type        = number
-  default     = 0
-}
-
-variable "transition_to_ia_days" {
-  description = "Indicates after how many days we are moving current objects to Standard-IA storage. i.e. 0 to disable, otherwise 1-999"
-  type        = number
-  default     = 0
 }
 
 variable "versioning" {
@@ -193,16 +172,10 @@ variable "website" {
   default     = false
 }
 
-variable "website_error" {
-  description = "Location of Error HTML file. i.e. error.html"
-  type        = string
-  default     = "error.html"
-}
-
-variable "website_index" {
-  description = "Location of Index HTML file. i.e index.html"
-  type        = string
-  default     = "index.html"
+variable "website_config" {
+  description = "Map containing static web-site hosting or redirect configuration."
+  type        = any # map(string)
+  default     = {}
 }
 
 variable "cors" {

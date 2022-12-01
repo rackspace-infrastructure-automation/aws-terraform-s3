@@ -1,18 +1,25 @@
 ###
-# This test adds the 'CORS Rules' configuration variables
+# Website with CORS rules test
 ###
 
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+
+    }
+  }
 }
 
 provider "aws" {
-  version = "~> 3.0"
-  region  = "us-west-2"
+  region = "us-west-2"
 }
 
 resource "random_string" "s3_rstring" {
-  length  = 18
+  length  = 16
   special = false
   upper   = false
 }
@@ -20,22 +27,36 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  bucket_acl                                 = "private"
-  bucket_logging                             = false
-  environment                                = "Development"
-  lifecycle_enabled                          = true
-  name                                       = "${random_string.s3_rstring.result}-example-s3-bucket"
-  noncurrent_version_expiration_days         = "425"
-  noncurrent_version_transition_glacier_days = "60"
-  noncurrent_version_transition_ia_days      = "30"
-  object_expiration_days                     = "425"
-  transition_to_glacier_days                 = "60"
-  transition_to_ia_days                      = "30"
-  versioning                                 = true
-  website                                    = true
-  website_error                              = "error.html"
-  website_index                              = "index.html"
-  cors                                       = true
+  bucket_acl     = "private"
+  bucket_logging = false
+  environment    = "Development"
+  name           = "${random_string.s3_rstring.result}-example-s3-bucket"
+  versioning     = true
+  website        = true
+  website_config = {
+    index_document = "index.html"
+    error_document = "error.html"
+    routing_rules = [{
+      condition = {
+        key_prefix_equals = "docs/"
+      },
+      redirect = {
+        replace_key_prefix_with = "documents/"
+      }
+      }, {
+      condition = {
+        http_error_code_returned_equals = 404
+        key_prefix_equals               = "archive/"
+      },
+      redirect = {
+        host_name          = "example.com"
+        http_redirect_code = 301
+        protocol           = "https"
+        replace_key_with   = "not_found.html"
+      }
+    }]
+  }
+  cors = true
   cors_rule = [
     {
       allowed_methods = ["PUT", "POST"]
@@ -51,9 +72,6 @@ module "s3" {
       max_age_seconds = 3000
     }
   ]
-
-  #  Not defining these to ensure it can properly handle undefined variable lists or strings
-  #  expose_headers  = ["Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length"]
 
   tags = {
     RightSaid = "Fred"
