@@ -1,22 +1,4 @@
 
-variable "allowed_headers" {
-  description = "Specifies which headers are allowed."
-  type        = list(string)
-  default     = []
-}
-
-variable "allowed_methods" {
-  description = "(Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD."
-  type        = list(string)
-  default     = []
-}
-
-variable "allowed_origins" {
-  description = "(Required) Specifies which origins are allowed."
-  type        = list(string)
-  default     = []
-}
-
 variable "bucket_acl" {
   description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
   type        = string
@@ -65,12 +47,6 @@ variable "environment" {
   default     = "Development"
 }
 
-variable "expose_headers" {
-  description = " Specifies expose header in the response."
-  type        = list(string)
-  default     = []
-}
-
 variable "force_destroy_bucket" {
   description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable."
   type        = bool
@@ -81,6 +57,12 @@ variable "kms_key_id" {
   description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
   type        = string
   default     = ""
+}
+
+variable "bucket_key_enabled" {
+  description = "Whether or not to use Amazon S3 Bucket Keys for SSE-KMS."
+  type        = bool
+  default     = false
 }
 
 variable "lifecycle_enabled" {
@@ -95,6 +77,12 @@ variable "lifecycle_rule_prefix" {
   default     = ""
 }
 
+variable "abort_incomplete_multipart_upload_days" {
+  description = "Abort Incomplete Multipart Upload Days i.e. 7 | 0"
+  type        = number
+  default     = 7
+}
+
 variable "logging_bucket_name" {
   description = "Name of the existing bucket where the logs will be stored."
   type        = string
@@ -105,12 +93,6 @@ variable "logging_bucket_prefix" {
   description = "Prefix for all log object keys. i.e. logs/"
   type        = string
   default     = ""
-}
-
-variable "max_age_seconds" {
-  description = "Specifies time in seconds that browser can cache the response for a preflight request."
-  type        = number
-  default     = 600
 }
 
 variable "name" {
@@ -194,7 +176,13 @@ variable "transition_to_ia_days" {
 }
 
 variable "versioning" {
-  description = "Enable bucket versioning. i.e. true | false"
+  description = "Enable bucket versioning."
+  type        = bool
+  default     = false
+}
+
+variable "mfa_delete" {
+  description = "Specifies whether MFA delete is enabled in the bucket versioning configuration"
   type        = bool
   default     = false
 }
@@ -215,4 +203,22 @@ variable "website_index" {
   description = "Location of Index HTML file. i.e index.html"
   type        = string
   default     = "index.html"
+}
+
+variable "cors" {
+  description = "Enable CORS Rules. Rules must be defined in the variable cors_rules"
+  type        = bool
+  default     = false
+}
+
+variable "cors_rule" {
+  description = "List of maps containing rules for Cross-Origin Resource Sharing."
+  type        = any
+  default     = []
+}
+
+variable "expected_bucket_owner" {
+  description = "The account ID of the expected bucket owner"
+  type        = string
+  default     = null
 }

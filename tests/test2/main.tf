@@ -20,9 +20,6 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  allowed_headers                            = ["*"]
-  allowed_methods                            = ["PUT", "POST"]
-  allowed_origins                            = ["*"]
   bucket_acl                                 = "private"
   bucket_logging                             = false
   environment                                = "Development"
@@ -38,10 +35,25 @@ module "s3" {
   website                                    = true
   website_error                              = "error.html"
   website_index                              = "index.html"
+  cors                                       = true
+  cors_rule = [
+    {
+      allowed_methods = ["PUT", "POST"]
+      allowed_origins = ["https://modules.tf", "https://terraform-aws-modules.modules.tf"]
+      allowed_headers = ["*"]
+      expose_headers  = ["ETag"]
+      max_age_seconds = 3000
+      }, {
+      allowed_methods = ["PUT"]
+      allowed_origins = ["https://example.com"]
+      allowed_headers = ["*"]
+      expose_headers  = ["ETag"]
+      max_age_seconds = 3000
+    }
+  ]
 
   #  Not defining these to ensure it can properly handle undefined variable lists or strings
   #  expose_headers  = ["Accept-Ranges", "Content-Range", "Content-Encoding", "Content-Length"]
-  #  max_age_seconds = 3000
 
   tags = {
     RightSaid = "Fred"
