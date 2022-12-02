@@ -8,7 +8,7 @@
  *
  * ```HCL
  * module "s3_basic" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.11"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.12"
  *
  *   bucket_logging    = false
  *   bucket_acl        = "private"
@@ -56,7 +56,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
   }
 }
@@ -82,9 +82,12 @@ locals {
 }
 
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket        = var.name
-  force_destroy = var.force_destroy_bucket
-  tags          = merge(var.tags, local.default_tags)
+
+  bucket = var.name
+
+  force_destroy       = var.force_destroy_bucket
+  object_lock_enabled = var.object_lock_enabled
+  tags                = merge(var.tags, local.default_tags)
 }
 
 ##############################################################
@@ -139,11 +142,12 @@ resource "aws_s3_bucket_logging" "s3_logging" {
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
   count = var.sse_algorithm == "none" ? 0 : 1
 
-  bucket = aws_s3_bucket.s3_bucket.id
+  bucket                = aws_s3_bucket.s3_bucket.id
+  expected_bucket_owner = var.expected_bucket_owner
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = var.sse_algorithm
-      kms_master_key_id = var.kms_key_id
+      sse_algorithm     = try(var.sse_algorithm, "AES256")
+      kms_master_key_id = try(var.kms_key_id, null)
     }
     bucket_key_enabled = var.bucket_key_enabled
   }
@@ -365,4 +369,53 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
 
   # Requires versioning enabled to build
   depends_on = [aws_s3_bucket_versioning.this]
+}
+
+##############################################################
+# S3 Intelligent Tiering Configuration
+##############################################################
+resource "aws_s3_bucket_intelligent_tiering_configuration" "this" {
+  for_each = { for k, v in local.intelligent_tiering : k => v if var.enable_intelligent_tiering }
+
+  name   = each.key
+  bucket = aws_s3_bucket.s3_bucket.id
+  status = try(tobool(each.value.status) ? "Enabled" : "Disabled", title(lower(each.value.status)), null)
+
+  # Max 1 block - filter
+  dynamic "filter" {
+    for_each = length(try(flatten([each.value.filter]), [])) == 0 ? [] : [true]
+
+    content {
+      prefix = try(each.value.filter.prefix, null)
+      tags   = try(each.value.filter.tags, null)
+    }
+  }
+
+  dynamic "tiering" {
+    for_each = each.value.tiering
+
+    content {
+      access_tier = tiering.key
+      days        = tiering.value.days
+    }
+  }
+
+}
+
+##############################################################
+# S3 Metrics Configuration
+##############################################################
+resource "aws_s3_bucket_metric" "this" {
+  for_each = { for k, v in local.metric_configuration : k => v if var.enable_bucket_metrics }
+
+  name   = each.value.name
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  dynamic "filter" {
+    for_each = length(try(flatten([each.value.filter]), [])) == 0 ? [] : [true]
+    content {
+      prefix = try(each.value.filter.prefix, null)
+      tags   = try(each.value.filter.tags, null)
+    }
+  }
 }

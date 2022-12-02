@@ -1,4 +1,3 @@
-
 variable "bucket_acl" {
   description = "Bucket ACL. Must be either authenticated-read, aws-exec-read, log-delivery-write, private, public-read or public-read-write. For more details https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl"
   type        = string
@@ -49,18 +48,6 @@ variable "environment" {
 
 variable "force_destroy_bucket" {
   description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable."
-  type        = bool
-  default     = false
-}
-
-variable "kms_key_id" {
-  description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
-  type        = string
-  default     = ""
-}
-
-variable "bucket_key_enabled" {
-  description = "Whether or not to use Amazon S3 Bucket Keys for SSE-KMS."
   type        = bool
   default     = false
 }
@@ -148,6 +135,18 @@ variable "sse_algorithm" {
   default     = "AES256"
 }
 
+variable "kms_key_id" {
+  description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
+  type        = string
+  default     = null
+}
+
+variable "bucket_key_enabled" {
+  description = "Whether or not to use Amazon S3 Bucket Keys for SSE-KMS."
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "A map of tags to be applied to the Bucket. i.e {Environment='Development'}"
   type        = map(string)
@@ -194,4 +193,16 @@ variable "expected_bucket_owner" {
   description = "The account ID of the expected bucket owner"
   type        = string
   default     = null
+}
+
+variable "enable_intelligent_tiering" {
+  description = "Enable intelligent tiering"
+  type        = bool
+  default     = false
+}
+
+variable "enable_bucket_metrics" {
+  description = "Enable bucket metrics"
+  type        = bool
+  default     = false
 }
