@@ -7,7 +7,7 @@ It will not do s3 origin, which is in another module.
 
 ```HCL
 module "s3_basic" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.11"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.12"
 
   bucket_logging    = false
   bucket_acl        = "private"
@@ -50,13 +50,13 @@ The following module variables were updated to better meet current Rackspace sty
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.0 |
+| aws | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.0 |
+| aws | ~> 4.0 |
 
 ## Modules
 
@@ -66,17 +66,19 @@ No Modules.
 
 | Name |
 |------|
-| [aws_canonical_user_id](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/canonical_user_id) |
-| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket) |
-| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_acl) |
-| [aws_s3_bucket_cors_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_cors_configuration) |
-| [aws_s3_bucket_lifecycle_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_lifecycle_configuration) |
-| [aws_s3_bucket_logging](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_logging) |
-| [aws_s3_bucket_object_lock_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_object_lock_configuration) |
-| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_public_access_block) |
-| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
-| [aws_s3_bucket_versioning](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_versioning) |
-| [aws_s3_bucket_website_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_website_configuration) |
+| [aws_canonical_user_id](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/data-sources/canonical_user_id) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_acl) |
+| [aws_s3_bucket_cors_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_cors_configuration) |
+| [aws_s3_bucket_intelligent_tiering_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_intelligent_tiering_configuration) |
+| [aws_s3_bucket_lifecycle_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_lifecycle_configuration) |
+| [aws_s3_bucket_logging](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_logging) |
+| [aws_s3_bucket_metric](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_metric) |
+| [aws_s3_bucket_object_lock_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_object_lock_configuration) |
+| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_public_access_block) |
+| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
+| [aws_s3_bucket_versioning](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_versioning) |
+| [aws_s3_bucket_website_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_website_configuration) |
 
 ## Inputs
 
@@ -92,11 +94,13 @@ No Modules.
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
 | cors | Enable CORS Rules. Rules must be defined in the variable cors\_rules | `bool` | `false` | no |
 | cors\_rule | List of maps containing rules for Cross-Origin Resource Sharing. | `any` | `[]` | no |
+| enable\_bucket\_metrics | Enable bucket metrics | `bool` | `false` | no |
+| enable\_intelligent\_tiering | Enable intelligent tiering | `bool` | `false` | no |
 | environment | Application environment for which this network is being created. must be one of ['Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test'] | `string` | `"Development"` | no |
 | expected\_bucket\_owner | The account ID of the expected bucket owner | `string` | `null` | no |
 | force\_destroy\_bucket | A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. | `bool` | `false` | no |
 | intelligent\_tiering | Map containing intelligent tiering configuration. | `any` | `{}` | no |
-| kms\_key\_id | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse\_algorithm as aws:kms. | `string` | `""` | no |
+| kms\_key\_id | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse\_algorithm as aws:kms. | `string` | `null` | no |
 | lifecycle\_enabled | Enable object lifecycle management. i.e. true \| false | `bool` | `false` | no |
 | lifecycle\_rule | List of maps containing configuration of object lifecycle management. | `any` | `[]` | no |
 | logging\_bucket\_name | Name of the existing bucket where the logs will be stored. | `string` | `""` | no |
