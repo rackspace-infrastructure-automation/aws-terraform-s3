@@ -121,7 +121,7 @@ resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.s3_bucket.id
   versioning_configuration {
     # Valid values: "Enabled" or "Suspended"
-    status     = var.versioning ? "Enabled" : "Suspended"
+    status = var.versioning ? "Enabled" : "Suspended"
     # Valid values: "Enabled" or "Disabled"
     mfa_delete = var.mfa_delete ? "Enabled" : "Disabled"
   }

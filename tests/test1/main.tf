@@ -31,7 +31,6 @@ module "s3" {
   bucket_logging    = false
   environment       = "Development"
   name              = "${random_string.s3_rstring.result}-example-s3-bucket"
-  versioning        = true
   lifecycle_enabled = true
   lifecycle_rule = [
     {
