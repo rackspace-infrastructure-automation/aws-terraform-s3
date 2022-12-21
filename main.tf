@@ -120,7 +120,9 @@ resource "aws_s3_bucket_acl" "s3_acl" {
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.s3_bucket.id
   versioning_configuration {
-    status     = var.versioning ? "Enabled" : "Disabled"
+    # Valid values: "Enabled" or "Suspended"
+    status     = var.versioning ? "Enabled" : "Suspended"
+    # Valid values: "Enabled" or "Disabled"
     mfa_delete = var.mfa_delete ? "Enabled" : "Disabled"
   }
 }

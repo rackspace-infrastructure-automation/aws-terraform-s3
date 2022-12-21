@@ -35,14 +35,14 @@ module "s3" {
   kms_key_id                 = "aws/s3"
   sse_algorithm              = "aws:kms"
   enable_intelligent_tiering = true
-  bucket_key_enabled = true
+  bucket_key_enabled         = true
 
   tags = {
     RightSaid = "Fred"
     LeftSaid  = "George"
   }
 
-    intelligent_tiering = {
+  intelligent_tiering = {
     general = {
       status = "Enabled"
       filter = {

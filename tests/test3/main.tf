@@ -27,13 +27,13 @@ resource "random_string" "s3_rstring" {
 module "s3_lifecycle" {
   source = "../../module"
 
-  bucket_acl                 = "private"
-  bucket_logging             = false
-  environment                = "Development"
-  name                       = "${random_string.s3_rstring.result}-example-s3-bucket"
-  versioning                 = true
-  enable_bucket_metrics      = true
-  lifecycle_enabled          = true
+  bucket_acl            = "private"
+  bucket_logging        = false
+  environment           = "Development"
+  name                  = "${random_string.s3_rstring.result}-example-s3-bucket"
+  versioning            = true
+  enable_bucket_metrics = true
+  lifecycle_enabled     = true
   lifecycle_rule = [
     {
       id      = "log"
