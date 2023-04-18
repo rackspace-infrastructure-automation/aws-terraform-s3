@@ -11,7 +11,6 @@
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.12"
  *
  *   bucket_logging    = false
- *   bucket_acl        = "private"
  *   environment       = "Development"
  *   name              = "${random_string.s3_rstring.result}-example-s3-bucket"
  *   versioning        = true
@@ -74,6 +73,7 @@ locals {
     Environment     = var.environment
   }
 
+  grants               = try(jsondecode(var.grant), var.grant)
   cors_rules           = try(jsondecode(var.cors_rule), var.cors_rule)
   lifecycle_rules      = try(jsondecode(var.lifecycle_rule), var.lifecycle_rule)
   intelligent_tiering  = try(jsondecode(var.intelligent_tiering), var.intelligent_tiering)
@@ -109,8 +109,42 @@ resource "aws_s3_bucket_public_access_block" "block_public_access_settings" {
 # S3 Access Control List
 ##############################################################
 resource "aws_s3_bucket_acl" "s3_acl" {
-  bucket = aws_s3_bucket.s3_bucket.id
-  acl    = contains(local.acl_list, var.bucket_acl) ? var.bucket_acl : "ACL_ERROR"
+  count = (var.acl != null && var.acl != "null") || length(local.grants) > 0 ? 1 : 0
+
+  bucket                = aws_s3_bucket.s3_bucket.id
+  expected_bucket_owner = var.expected_bucket_owner
+
+  # hack when `null` value can't be used (eg, from terragrunt, https://github.com/gruntwork-io/terragrunt/pull/1367)
+  acl = var.acl == "null" ? null : var.acl
+
+  dynamic "access_control_policy" {
+    for_each = length(local.grants) > 0 ? [true] : []
+
+    content {
+      dynamic "grant" {
+        for_each = local.grants
+
+        content {
+          permission = grant.value.permission
+
+          grantee {
+            type          = grant.value.type
+            id            = try(grant.value.id, null)
+            uri           = try(grant.value.uri, null)
+            email_address = try(grant.value.email, null)
+          }
+        }
+      }
+
+      owner {
+        id           = try(var.owner["id"], data.aws_canonical_user_id.this.id)
+        display_name = try(var.owner["display_name"], null)
+      }
+    }
+  }
+
+  # This `depends_on` is to prevent "AccessControlListNotSupported: The bucket does not allow ACLs."
+  depends_on = [aws_s3_bucket_ownership_controls.this]
 }
 
 
@@ -420,4 +454,23 @@ resource "aws_s3_bucket_metric" "this" {
       tags   = try(each.value.filter.tags, null)
     }
   }
+}
+
+##############################################################
+# S3 Bucket Ownership Control
+##############################################################
+resource "aws_s3_bucket_ownership_controls" "this" {
+  count = var.control_object_ownership ? 1 : 0
+
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  rule {
+    object_ownership = var.object_ownership
+  }
+
+  # This `depends_on` is to prevent "A conflicting conditional operation is currently in progress against this resource."
+  depends_on = [
+    aws_s3_bucket_public_access_block.block_public_access_settings,
+    aws_s3_bucket.s3_bucket
+  ]
 }

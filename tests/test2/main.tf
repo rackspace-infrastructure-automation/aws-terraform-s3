@@ -27,13 +27,14 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  bucket_acl     = "private"
-  bucket_logging = false
-  environment    = "Development"
-  name           = "${random_string.s3_rstring.result}-example-s3-bucket"
-  versioning     = true
-  website        = true
-  website_config = {
+  control_object_ownership = true
+  acl                      = "private"
+  bucket_logging           = false
+  environment              = "Development"
+  name                     = "${random_string.s3_rstring.result}-example-s3-bucket"
+  versioning               = true
+  website                  = true
+  website_config           = {
     index_document = "index.html"
     error_document = "error.html"
     routing_rules = [{

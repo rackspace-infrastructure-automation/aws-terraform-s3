@@ -27,7 +27,6 @@ resource "random_string" "s3_rstring" {
 module "s3" {
   source = "../../module"
 
-  bucket_acl                 = "private"
   bucket_logging             = false
   environment                = "Development"
   name                       = "${random_string.s3_rstring.result}-example-s3-bucket"
