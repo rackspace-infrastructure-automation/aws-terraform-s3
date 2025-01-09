@@ -49,13 +49,13 @@ The following module variables were updated to better meet current Rackspace sty
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 4.0 |
+| aws | >= 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 4.0 |
+| aws | >= 4.0 |
 
 ## Modules
 

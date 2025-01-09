@@ -8,7 +8,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = ">= 4.0"
 
     }
   }
@@ -34,7 +34,7 @@ module "s3" {
   name                     = "${random_string.s3_rstring.result}-example-s3-bucket"
   versioning               = true
   website                  = true
-  website_config           = {
+  website_config = {
     index_document = "index.html"
     error_document = "error.html"
     routing_rules = [{
