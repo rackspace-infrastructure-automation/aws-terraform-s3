@@ -7,7 +7,7 @@ variable "bucket_logging" {
 variable "block_public_access" {
   description = "Block various forms of public access on a per bucket level"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_access_acl" {

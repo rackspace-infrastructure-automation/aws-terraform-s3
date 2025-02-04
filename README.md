@@ -7,7 +7,7 @@ It will not do s3 origin, which is in another module.
 
 ```HCL
 module "s3_basic" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.12"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
 
   bucket_logging    = false
   environment       = "Development"
@@ -85,7 +85,7 @@ No Modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | acl | (Optional) The canned ACL to apply. Conflicts with `grant` | `string` | `null` | no |
-| block\_public\_access | Block various forms of public access on a per bucket level | `bool` | `false` | no |
+| block\_public\_access | Block various forms of public access on a per bucket level | `bool` | `true` | no |
 | block\_public\_access\_acl | Related to block\_public\_access. PUT Bucket acl and PUT Object acl calls will fail if the specified ACL allows public access. PUT Object calls will fail if the request includes an object ACL. | `bool` | `true` | no |
 | block\_public\_access\_ignore\_acl | Related to block\_public\_access. Ignore public ACLs on this bucket and any objects that it contains. | `bool` | `true` | no |
 | block\_public\_access\_policy | Related to block\_public\_access. Reject calls to PUT Bucket policy if the specified bucket policy allows public access. | `bool` | `true` | no |
