@@ -8,7 +8,7 @@
  *
  * ```HCL
  * module "s3_basic" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
  *
  *   bucket_logging    = false
  *   environment       = "Development"

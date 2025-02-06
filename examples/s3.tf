@@ -21,10 +21,9 @@ resource "random_string" "s3_rstring" {
 }
 
 module "s3_basic" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
 
   bucket_logging    = false
-  bucket_acl        = "private"
   environment       = "Development"
   name              = "${random_string.s3_rstring.result}-example-s3-bucket"
   versioning        = true
@@ -47,9 +46,8 @@ module "s3_basic" {
 module "s3_website_with_cors" {
   # Websites and CORS have undergone a significant refactor since v0.12.7 due to features that added to their complexity.
   # Follow this example if you are using v0.12.10+
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
 
-  bucket_acl     = "private"
   bucket_logging = false
   environment    = "Development"
   name           = "${random_string.s3_rstring.result}-example-s3-bucket"
@@ -102,9 +100,8 @@ module "s3_website_with_cors" {
 }
 
 module "s3_object_lock" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
 
-  bucket_acl                 = "private"
   bucket_logging             = false
   environment                = "Development"
   name                       = "${random_string.s3_rstring.result}-example-s3-bucket"
@@ -122,9 +119,8 @@ module "s3_object_lock" {
 module "s3_with_lifecycle" {
   # Lifecycle has undergone a significant refactor since v0.12.7 due to features that added to their complexity.
   # Follow this example if you are using v0.12.10+
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
 
-  bucket_acl        = "private"
   bucket_logging    = false
   environment       = "Development"
   name              = "${random_string.s3_rstring.result}-example-s3-bucket"

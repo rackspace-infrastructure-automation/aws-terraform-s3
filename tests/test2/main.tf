@@ -28,7 +28,6 @@ module "s3" {
   source = "../../module"
 
   control_object_ownership = true
-  acl                      = "private"
   bucket_logging           = false
   environment              = "Development"
   name                     = "${random_string.s3_rstring.result}-example-s3-bucket"

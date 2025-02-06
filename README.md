@@ -7,7 +7,7 @@ It will not do s3 origin, which is in another module.
 
 ```HCL
 module "s3_basic" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.16"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-s3//?ref=v0.12.17"
 
   bucket_logging    = false
   environment       = "Development"
@@ -92,7 +92,7 @@ No Modules.
 | block\_public\_access\_restrict\_bucket | Related to block\_public\_access. Only the bucket owner and AWS Services can access this buckets if it has a public policy. | `bool` | `true` | no |
 | bucket\_key\_enabled | Whether or not to use Amazon S3 Bucket Keys for SSE-KMS. | `bool` | `false` | no |
 | bucket\_logging | Enable bucket logging. Will store logs in another existing bucket. You must give the log-delivery group WRITE and READ\_ACP permissions to the target bucket. i.e. true \| false | `bool` | `false` | no |
-| control\_object\_ownership | Whether to manage S3 Bucket Ownership Controls on this bucket. | `bool` | `false` | no |
+| control\_object\_ownership | Whether to manage S3 Bucket Ownership Controls on this bucket. | `bool` | `true` | no |
 | cors | Enable CORS Rules. Rules must be defined in the variable cors\_rules | `bool` | `false` | no |
 | cors\_rule | List of maps containing rules for Cross-Origin Resource Sharing. | `any` | `[]` | no |
 | enable\_bucket\_metrics | Enable bucket metrics | `bool` | `false` | no |
@@ -116,7 +116,7 @@ No Modules.
 | object\_lock\_retention\_days | The retention of the object lock in days. Either days or years must be specified, but not both. | `number` | `null` | no |
 | object\_lock\_retention\_years | The retention of the object lock in years. Either days or years must be specified, but not both. | `number` | `null` | no |
 | object\_lock\_token | A token to allow Object Lock to be enabled for an existing bucket. You must contact AWS support for the bucket's 'Object Lock token'. The token is generated in the back-end when versioning is enabled on a bucket. | `string` | `null` | no |
-| object\_ownership | Object ownership. Valid values: BucketOwnerEnforced, BucketOwnerPreferred or ObjectWriter. 'BucketOwnerEnforced': ACLs are disabled, and the bucket owner automatically owns and has full control over every object in the bucket. 'BucketOwnerPreferred': Objects uploaded to the bucket change ownership to the bucket owner if the objects are uploaded with the bucket-owner-full-control canned ACL. 'ObjectWriter': The uploading account will own the object if the object is uploaded with the bucket-owner-full-control canned ACL. | `string` | `"ObjectWriter"` | no |
+| object\_ownership | Object ownership. Valid values: BucketOwnerEnforced, BucketOwnerPreferred or ObjectWriter. 'BucketOwnerEnforced': ACLs are disabled, and the bucket owner automatically owns and has full control over every object in the bucket. 'BucketOwnerPreferred': Objects uploaded to the bucket change ownership to the bucket owner if the objects are uploaded with the bucket-owner-full-control canned ACL. 'ObjectWriter': The uploading account will own the object if the object is uploaded with the bucket-owner-full-control canned ACL. | `string` | `"BucketOwnerEnforced"` | no |
 | owner | Bucket owner's display name and ID. Conflicts with `acl` | `map(string)` | `{}` | no |
 | sse\_algorithm | The server-side encryption algorithm to use. Valid values are AES256, aws:kms, and none | `string` | `"AES256"` | no |
 | tags | A map of tags to be applied to the Bucket. i.e {Environment='Development'} | `map(string)` | `{}` | no |
