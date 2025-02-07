@@ -78,6 +78,7 @@ locals {
   lifecycle_rules      = try(jsondecode(var.lifecycle_rule), var.lifecycle_rule)
   intelligent_tiering  = try(jsondecode(var.intelligent_tiering), var.intelligent_tiering)
   metric_configuration = try(jsondecode(var.metric_configuration), var.metric_configuration)
+  create_bucket_acl    = (var.acl != null && var.acl != "null") || length(local.grants) > 0
 
 }
 
@@ -109,7 +110,7 @@ resource "aws_s3_bucket_public_access_block" "block_public_access_settings" {
 # S3 Access Control List
 ##############################################################
 resource "aws_s3_bucket_acl" "s3_acl" {
-  count = (var.acl != null && var.acl != "null") || length(local.grants) > 0 ? 1 : 0
+  count = local.create_bucket_acl ? 1 : 0
 
   bucket                = aws_s3_bucket.s3_bucket.id
   expected_bucket_owner = var.expected_bucket_owner
